@@ -47,12 +47,14 @@ void SDL_Quit(void);
 
 void SDL_Delay(Uint32 ms);
 
-const char *SDL_GetError(void);
+//const char *SDL_GetError(void);
 
 struct SDL_mutex;
 typedef struct SDL_mutex SDL_mutex;
 
-char *** allocateTwoDimenArrayOnHeapUsingMalloc(int row, int col);
+/** The SDL semaphore structure, defined in SDL_sem.c */
+struct SDL_semaphore;
+typedef struct SDL_semaphore SDL_sem;
 
 #define SDL_mutexP(mutex) SDL_LockMutex(mutex)
 #define SDL_mutexV(mutex) SDL_UnlockMutex(mutex)

@@ -417,3 +417,135 @@ int SDL_UpperBlit (SDL_Surface *src, SDL_Rect *srcrect,
 	dstrect->w = dstrect->h = 0;
 	return 0;
 }
+
+void SDL_GetRGBA(Uint32 pixel, const SDL_PixelFormat * const fmt,
+		 Uint8 *r, Uint8 *g, Uint8 *b, Uint8 *a)
+{
+	if ( fmt->palette == NULL ) {
+	        /*
+		 * This makes sure that the result is mapped to the
+		 * interval [0..255], and the maximum value for each
+		 * component is 255. This is important to make sure
+		 * that white is indeed reported as (255, 255, 255),
+		 * and that opaque alpha is 255.
+		 * This only works for RGB bit fields at least 4 bit
+		 * wide, which is almost always the case.
+		 */
+	        unsigned v;
+		v = (pixel & fmt->Rmask) >> fmt->Rshift;
+		*r = (v << fmt->Rloss) + (v >> (8 - (fmt->Rloss << 1)));
+		v = (pixel & fmt->Gmask) >> fmt->Gshift;
+		*g = (v << fmt->Gloss) + (v >> (8 - (fmt->Gloss << 1)));
+		v = (pixel & fmt->Bmask) >> fmt->Bshift;
+		*b = (v << fmt->Bloss) + (v >> (8 - (fmt->Bloss << 1)));
+		if(fmt->Amask) {
+		        v = (pixel & fmt->Amask) >> fmt->Ashift;
+			*a = (v << fmt->Aloss) + (v >> (8 - (fmt->Aloss << 1)));
+		} else {
+		        *a = SDL_ALPHA_OPAQUE;
+                }
+	} else {
+		*r = fmt->palette->colors[pixel].r;
+		*g = fmt->palette->colors[pixel].g;
+		*b = fmt->palette->colors[pixel].b;
+		*a = SDL_ALPHA_OPAQUE;
+	}
+}
+
+void SDL_GetRGB(Uint32 pixel, const SDL_PixelFormat * const fmt,
+                Uint8 *r,Uint8 *g,Uint8 *b)
+{
+	if ( fmt->palette == NULL ) {
+	        /* the note for SDL_GetRGBA above applies here too */
+	        unsigned v;
+		v = (pixel & fmt->Rmask) >> fmt->Rshift;
+		*r = (v << fmt->Rloss) + (v >> (8 - (fmt->Rloss << 1)));
+		v = (pixel & fmt->Gmask) >> fmt->Gshift;
+		*g = (v << fmt->Gloss) + (v >> (8 - (fmt->Gloss << 1)));
+		v = (pixel & fmt->Bmask) >> fmt->Bshift;
+		*b = (v << fmt->Bloss) + (v >> (8 - (fmt->Bloss << 1)));
+	} else {
+		*r = fmt->palette->colors[pixel].r;
+		*g = fmt->palette->colors[pixel].g;
+		*b = fmt->palette->colors[pixel].b;
+	}
+}
+
+/* Find the pixel value corresponding to an RGBA quadruple */
+Uint32 SDL_MapRGBA
+(const SDL_PixelFormat * const format,
+ const Uint8 r, const Uint8 g, const Uint8 b, const Uint8 a)
+{
+	if ( format->palette == NULL ) {
+	        return (r >> format->Rloss) << format->Rshift
+		    | (g >> format->Gloss) << format->Gshift
+		    | (b >> format->Bloss) << format->Bshift
+		    | ((a >> format->Aloss) << format->Ashift & format->Amask);
+	} else {
+		return SDL_FindColor(format->palette, r, g, b);
+	}
+}
+
+/*
+ * Set the color key in a blittable surface
+ */
+int SDL_SetColorKey (SDL_Surface *surface, Uint32 flag, Uint32 key)
+{
+	/* Sanity check the flag as it gets passed in */
+	if ( flag & SDL_SRCCOLORKEY ) {
+		//if ( flag & (SDL_RLEACCEL|SDL_RLEACCELOK) ) {
+		//	flag = (SDL_SRCCOLORKEY | SDL_RLEACCELOK);
+		//} else {
+			flag = SDL_SRCCOLORKEY;
+		//}
+	} else {
+		flag = 0;
+	}
+
+	/* Optimize away operations that don't change anything */
+	if ( (flag == (surface->flags & (SDL_SRCCOLORKEY|SDL_RLEACCELOK))) &&
+	     (key == surface->format->colorkey) ) {
+		return(0);
+	}
+
+	/* UnRLE surfaces before we change the colorkey */
+	//if ( surface->flags & SDL_RLEACCEL ) {
+	//        SDL_UnRLESurface(surface, 1);
+	//}
+
+	if ( flag ) {
+		SDL_VideoDevice *video = current_video;
+		SDL_VideoDevice *this  = current_video;
+
+
+		surface->flags |= SDL_SRCCOLORKEY;
+		surface->format->colorkey = key;
+		/*
+		if ( (surface->flags & SDL_HWACCEL) == SDL_HWACCEL ) {
+			if ( (video->SetHWColorKey == NULL) ||
+			     (video->SetHWColorKey(this, surface, key) < 0) ) {
+				surface->flags &= ~SDL_HWACCEL;
+			}
+		}
+		if ( flag & SDL_RLEACCELOK ) {
+			surface->flags |= SDL_RLEACCELOK;
+		} else {
+		*/	
+			surface->flags &= ~SDL_RLEACCELOK;
+		//}
+	} else {
+		surface->flags &= ~(SDL_SRCCOLORKEY|SDL_RLEACCELOK);
+		surface->format->colorkey = 0;
+	}
+	SDL_InvalidateMap(surface->map);
+	return(0);
+}
+
+/* 
+ * Convert a surface into the specified pixel format.
+ */
+SDL_Surface * SDL_ConvertSurface (SDL_Surface *surface,
+					SDL_PixelFormat *format, Uint32 flags)
+{
+	return surface;
+}

@@ -94,17 +94,6 @@ const SDL_version* SDL_Linked_Version()
     return vers;
 }
 
-char *** allocateTwoDimenArrayOnHeapUsingMalloc(int row, int col)
-{
-	char ***ptr = malloc(row * sizeof(*ptr) + row * (col * sizeof **ptr) );
-
-	int * const data = ptr + row;
-	for(int i = 0; i < row; i++)
-		ptr[i] = data + i * col;
-
-	return ptr;
-}
-
 void SDL_DestroyMutex(SDL_mutex* mutex)
 {
 

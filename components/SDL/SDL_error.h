@@ -41,7 +41,7 @@ extern "C" {
  */
 /*@{*/
 extern DECLSPEC int SDLCALL SDL_SetError(const char *fmt, ...);
-extern DECLSPEC const char * SDLCALL SDL_GetError(void);
+extern DECLSPEC const char* SDLCALL SDL_GetError(void);
 extern DECLSPEC void SDLCALL SDL_ClearError(void);
 /*@}*/
 

@@ -112,18 +112,24 @@ typedef struct SDL_Surface {
 #define SDL_ALPHA_TRANSPARENT 0
 /*@}*/
 
-typedef struct{
-  Uint32 hw_available:1;
-  Uint32 wm_available:1;
-  Uint32 blit_hw:1;
-  Uint32 blit_hw_CC:1;
-  Uint32 blit_hw_A:1;
-  Uint32 blit_sw:1;
-  Uint32 blit_sw_CC:1;
-  Uint32 blit_sw_A:1;
-  Uint32 blit_fill;
-  Uint32 video_mem;
-  SDL_PixelFormat *vfmt;
+/** Useful for determining the video hardware capabilities */
+typedef struct SDL_VideoInfo {
+	Uint32 hw_available :1;	/**< Flag: Can you create hardware surfaces? */
+	Uint32 wm_available :1;	/**< Flag: Can you talk to a window manager? */
+	Uint32 UnusedBits1  :6;
+	Uint32 UnusedBits2  :1;
+	Uint32 blit_hw      :1;	/**< Flag: Accelerated blits HW --> HW */
+	Uint32 blit_hw_CC   :1;	/**< Flag: Accelerated blits with Colorkey */
+	Uint32 blit_hw_A    :1;	/**< Flag: Accelerated blits with Alpha */
+	Uint32 blit_sw      :1;	/**< Flag: Accelerated blits SW --> HW */
+	Uint32 blit_sw_CC   :1;	/**< Flag: Accelerated blits with Colorkey */
+	Uint32 blit_sw_A    :1;	/**< Flag: Accelerated blits with Alpha */
+	Uint32 blit_fill    :1;	/**< Flag: Accelerated color fill */
+	Uint32 UnusedBits3  :16;
+	Uint32 video_mem;	/**< The total amount of video memory (in K) */
+	SDL_PixelFormat *vfmt;	/**< Value: The format of the video surface */
+	int    current_w;	/**< Value: The current video mode width */
+	int    current_h;	/**< Value: The current video mode height */
 } SDL_VideoInfo;
 
 /** typedef for private surface blitting functions */
@@ -202,4 +208,54 @@ void SDL_UnlockDisplay();
 typedef unsigned char  JE_byte;
 //extern JE_byte ** allocateTwoDimenArrayOnHeapUsingMalloc(int row, int col);
 
+
+/**
+ * Maps a pixel value into the RGB components for a given pixel format
+ */
+extern DECLSPEC void SDLCALL SDL_GetRGB(Uint32 pixel,
+				const SDL_PixelFormat * const fmt,
+				Uint8 *r, Uint8 *g, Uint8 *b);
+
+/**
+ * Maps a pixel value into the RGBA components for a given pixel format
+ */
+extern DECLSPEC void SDLCALL SDL_GetRGBA(Uint32 pixel,
+				const SDL_PixelFormat * const fmt,
+				Uint8 *r, Uint8 *g, Uint8 *b, Uint8 *a);
+
+/**
+ * Maps an RGBA quadruple to a pixel value for a given pixel format
+ */
+extern DECLSPEC Uint32 SDLCALL SDL_MapRGBA
+(const SDL_PixelFormat * const format,
+ const Uint8 r, const Uint8 g, const Uint8 b, const Uint8 a);
+
+
+/**
+ * Sets the color key (transparent pixel) in a blittable surface.
+ * If 'flag' is SDL_SRCCOLORKEY (optionally OR'd with SDL_RLEACCEL), 
+ * 'key' will be the transparent pixel in the source image of a blit.
+ * SDL_RLEACCEL requests RLE acceleration for the surface if present,
+ * and removes RLE acceleration if absent.
+ * If 'flag' is 0, this function clears any current color key.
+ * This function returns 0, or -1 if there was an error.
+ */
+extern DECLSPEC int SDLCALL SDL_SetColorKey
+			(SDL_Surface *surface, Uint32 flag, Uint32 key);
+
+/**
+ * Creates a new surface of the specified format, and then copies and maps 
+ * the given surface to it so the blit of the converted surface will be as 
+ * fast as possible.  If this function fails, it returns NULL.
+ *
+ * The 'flags' parameter is passed to SDL_CreateRGBSurface() and has those 
+ * semantics.  You can also pass SDL_RLEACCEL in the flags parameter and
+ * SDL will try to RLE accelerate colorkey and alpha blits in the resulting
+ * surface.
+ *
+ * This function is used internally by SDL_DisplayFormat().
+ */
+extern DECLSPEC SDL_Surface * SDLCALL SDL_ConvertSurface
+			(SDL_Surface *src, SDL_PixelFormat *fmt, Uint32 flags);
+      
 #endif

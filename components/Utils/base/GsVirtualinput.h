@@ -28,13 +28,15 @@ public:
      * @brief setRect   set coordinates and dimensions of the loaded texture
      * @param rect      variable that does that
      */
-    auto setRect(const GsRect<float> &rect) -> void
+    //auto setRect(const GsRect<float> &rect) -> void
+    void setRect(const GsRect<float> &rect)
     {
         this->x = rect.x; this->y = rect.y;
         this->w = rect.w; this->h = rect.h;
     }
 
-    auto Rect() const -> auto
+    //auto Rect() const -> auto
+    const GsRect<float> Rect() 
     {
         return GsRect<float>(this->x, this->y,
                              this->w, this->h);
