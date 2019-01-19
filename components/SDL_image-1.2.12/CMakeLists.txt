@@ -1,0 +1,5 @@
+set(COMPONENT_SRCS "IMG.c")
+set(COMPONENT_ADD_INCLUDEDIRS ".")
+set(COMPONENT_PRIV_REQUIRES SDL)
+
+register_component()

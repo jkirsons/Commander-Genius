@@ -8,7 +8,7 @@
 #include "freertos/queue.h"
 
 #include "SDL_rwops.h"
-#include "SDL_mixer.h"
+//#include "SDL_mixer.h"
 
 // Needed for calling the actual sound output.
 #define SAMPLECOUNT		256
