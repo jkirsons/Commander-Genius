@@ -43,7 +43,7 @@ struct NewGamePlayersEvent : SelectionEvent
 
 
 
-template <class _T>
+template <class _Tx>
 class CPlayersSelection : public GameMenu
 {
 
@@ -61,7 +61,7 @@ public:
             else
                 playerStr = "Player " + itoa(i);
 
-            GameButton *button = new GameButton( playerStr, new _T(i), style );
+            GameButton *button = new GameButton( playerStr, new _Tx(i), style );
 
             mpButtonList.push_back( button );
             mpMenuDialog->addControl( mpButtonList.back() );

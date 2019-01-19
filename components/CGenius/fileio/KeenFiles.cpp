@@ -56,5 +56,5 @@ if (pModule != nullptr)
 return false;
 
 #endif
-
+    return false;
 }
