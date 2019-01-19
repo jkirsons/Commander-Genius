@@ -1,6 +1,6 @@
 #include "SDL_video.h"
 #include "SDL.h"
-#include "SDL_blit.h"
+//#include "SDL_blit.h"
 
 #define SPI_BUS TFT_VSPI_HOST
 
@@ -514,8 +514,8 @@ int SDL_SetColorKey (SDL_Surface *surface, Uint32 flag, Uint32 key)
 	//}
 
 	if ( flag ) {
-		SDL_VideoDevice *video = current_video;
-		SDL_VideoDevice *this  = current_video;
+		//SDL_VideoDevice *video = current_video;
+		//SDL_VideoDevice *this  = current_video;
 
 
 		surface->flags |= SDL_SRCCOLORKEY;
@@ -548,4 +548,33 @@ SDL_Surface * SDL_ConvertSurface (SDL_Surface *surface,
 					SDL_PixelFormat *format, Uint32 flags)
 {
 	return surface;
+}
+
+/*
+ * Match an RGB value to a particular palette index
+ */
+Uint8 SDL_FindColor(SDL_Palette *pal, Uint8 r, Uint8 g, Uint8 b)
+{
+	/* Do colorspace distance matching */
+	unsigned int smallest;
+	unsigned int distance;
+	int rd, gd, bd;
+	int i;
+	Uint8 pixel=0;
+		
+	smallest = ~0;
+	for ( i=0; i<pal->ncolors; ++i ) {
+		rd = pal->colors[i].r - r;
+		gd = pal->colors[i].g - g;
+		bd = pal->colors[i].b - b;
+		distance = (rd*rd)+(gd*gd)+(bd*bd);
+		if ( distance < smallest ) {
+			pixel = i;
+			if ( distance == 0 ) { /* Perfect match! */
+				break;
+			}
+			smallest = distance;
+		}
+	}
+	return(pixel);
 }

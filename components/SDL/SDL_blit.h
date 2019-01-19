@@ -26,6 +26,8 @@
 
 #include "SDL_endian.h"
 
+typedef struct SDL_PixelFormat SDL_PixelFormat;
+
 /* The structure passed to the low level blit functions */
 typedef struct {
 	Uint8 *s_pixels;
@@ -55,6 +57,11 @@ typedef struct {
 	SDL_loblit blit;
 	void *aux_data;
 } pub_swaccel;
+
+// These are in SDL_video.h
+typedef struct SDL_Surface SDL_Surface;
+typedef int (*SDL_blit)(struct SDL_Surface *src, SDL_Rect *srcrect,
+			struct SDL_Surface *dst, SDL_Rect *dstrect);
 
 /* Blit mapping definition */
 typedef struct SDL_BlitMap {
@@ -532,5 +539,7 @@ do {						\
 #if defined(_MSC_VER) && (_MSC_VER >= 600)
 #pragma warning(disable: 4550)
 #endif
+
+void SDL_InvalidateMap(SDL_BlitMap *map);
 
 #endif /* _SDL_blit_h */

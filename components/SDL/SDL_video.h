@@ -4,6 +4,7 @@
 #include "SDL_stdinc.h"
 #include "SDL_error.h"
 #include "SDL_rwops.h"
+#include "SDL_blit.h"
 
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
@@ -257,5 +258,7 @@ extern DECLSPEC int SDLCALL SDL_SetColorKey
  */
 extern DECLSPEC SDL_Surface * SDLCALL SDL_ConvertSurface
 			(SDL_Surface *src, SDL_PixelFormat *fmt, Uint32 flags);
-      
+
+Uint8 SDL_FindColor(SDL_Palette *pal, Uint8 r, Uint8 g, Uint8 b);
+
 #endif
