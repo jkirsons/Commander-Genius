@@ -18,6 +18,7 @@
 #include "SDL_scancode.h"
 #include "SDL_blit.h"
 #include "SDL_event.h"
+#include "SDL_mouse.h"
 
 typedef int SDLMod;
 //typedef int SDL_Joystick;
@@ -39,10 +40,11 @@ typedef int SDLMod;
 #define SDLK_KP7 0
 #define SDLK_KP1 0
 #define SDLK_PRINT 0
-
+/*
 #define SDL_BUTTON_LEFT 0
 #define SDL_BUTTON_RIGHT 1
 #define SDL_BUTTON_MIDDLE 2
+*/
 #define SDLK_NUMLOCK 999
 #define SDLK_SCROLLOCK 1000
 

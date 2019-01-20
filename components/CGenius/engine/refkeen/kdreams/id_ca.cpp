@@ -1698,8 +1698,8 @@ void CA_CacheMarks (const id0_char_t *title, id0_boolean_t cachedownlevel)
 #endif
 {
 	id0_boolean_t dialog;
-	id0_int_t 	i,next,homex,homey,x/*,y*/,thx,thy,numcache,lastx/*,xl*/,xh;
-	id0_long_t	barx,barstep;
+	id0_int_t 	i,next,homex,homey,x/*,y*/,thx = 0,thy = 0,numcache,lastx = 0/*,xl*/,xh;
+	id0_long_t	barx = 0,barstep = 0;
 	id0_long_t	pos,endpos,nextpos,nextendpos,compressed;
 	id0_long_t	bufferstart,bufferend;	// file position of general buffer
 	id0_byte_t	id0_far *source;

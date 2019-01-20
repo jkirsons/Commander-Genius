@@ -1733,7 +1733,7 @@ USL_HandleError(id0_int_t num)
 static void
 USL_DrawItem(id0_word_t hiti,id0_word_t hitn)
 {
-	id0_boolean_t		handled,centered;
+	id0_boolean_t		handled,centered = false;
 	const id0_char_t		*text;
 	id0_word_t		w,h;
 	id0_int_t			picup,picdown;
@@ -1917,7 +1917,7 @@ USL_TrackItem(id0_word_t hiti,id0_word_t hitn)
 {
 	id0_boolean_t		inside,last;
 	id0_word_t		ini,inn,
-				on,
+				on = 0,
 				sel,othersel;
 	UserItem	*ip,*op;
 
@@ -2550,11 +2550,11 @@ bool USL_DoHelpPonder(memptr text,id0_long_t len,
 
     id0_boolean_t		moved;
     id0_word_t		i,
-            pixdiv,
+            pixdiv = 0,
             w,h, page,
             top,num,loc,
             id0_far *lp,
-            base,srcbase,destbase;
+            base = 0,srcbase,destbase;
     ScanCode	waitkey;
     //id0_longword_t	lasttime;
     WindowRec	wr;
@@ -2840,7 +2840,7 @@ USL_CtlHButtonCustom(UserCall call,id0_word_t i,id0_word_t n)
 #ifdef	HELPTEXTLINKED	// Ugly hack because of lack of disk space...
 	{
 		extern id0_char_t *gametext, *context, *story;
-		id0_char_t *buf;
+		id0_char_t *buf = 0;
 		memptr	dupe;
 
 		switch (n)

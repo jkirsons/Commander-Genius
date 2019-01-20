@@ -260,5 +260,6 @@ extern DECLSPEC SDL_Surface * SDLCALL SDL_ConvertSurface
 			(SDL_Surface *src, SDL_PixelFormat *fmt, Uint32 flags);
 
 Uint8 SDL_FindColor(SDL_Palette *pal, Uint8 r, Uint8 g, Uint8 b);
+int SDL_SetAlpha (SDL_Surface *surface, Uint32 flag, Uint8 value);
 
 #endif

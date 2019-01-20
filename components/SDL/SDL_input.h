@@ -411,7 +411,7 @@ typedef enum
     SDL_JOYSTICK_POWER_MAX
 } SDL_JoystickPowerLevel;
 
-extern Uint32 SDL_GetMouseState(int* x,int* y);
+//extern Uint32 SDL_GetMouseState(int* x,int* y);
 extern void SDL_WarpMouse(Uint16 x, Uint16 y);
 
 /**
@@ -424,8 +424,8 @@ extern void SDL_WarpMouse(Uint16 x, Uint16 y);
 //#define SDL_BUTTON_LEFT     1
 #define SDL_BUTTON_MIDDLE   2
 //#define SDL_BUTTON_RIGHT    3
-#define SDL_BUTTON_X1       4
-#define SDL_BUTTON_X2       5
+//#define SDL_BUTTON_X1       4
+//#define SDL_BUTTON_X2       5
 #define SDL_BUTTON_LMASK    SDL_BUTTON(SDL_BUTTON_LEFT)
 #define SDL_BUTTON_MMASK    SDL_BUTTON(SDL_BUTTON_MIDDLE)
 #define SDL_BUTTON_RMASK    SDL_BUTTON(SDL_BUTTON_RIGHT)
@@ -724,6 +724,5 @@ extern DECLSPEC void SDLCALL SDL_JoystickClose(SDL_Joystick * joystick);
  */
 extern DECLSPEC SDL_JoystickPowerLevel SDLCALL SDL_JoystickCurrentPowerLevel(SDL_Joystick * joystick);
 
-SDL_Keymod SDL_GetModState(void);
 
 #endif /* SDL_keycode_h_ */

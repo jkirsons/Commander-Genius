@@ -578,3 +578,63 @@ Uint8 SDL_FindColor(SDL_Palette *pal, Uint8 r, Uint8 g, Uint8 b)
 	}
 	return(pixel);
 }
+
+/* This function sets the alpha channel of a surface */
+int SDL_SetAlpha (SDL_Surface *surface, Uint32 flag, Uint8 value)
+{
+	Uint32 oldflags = surface->flags;
+	Uint32 oldalpha = surface->format->alpha;
+
+	/* Sanity check the flag as it gets passed in */
+	if ( flag & SDL_SRCALPHA ) {
+		//if ( flag & (SDL_RLEACCEL|SDL_RLEACCELOK) ) {
+		//	flag = (SDL_SRCALPHA | SDL_RLEACCELOK);
+		//} else {
+			flag = SDL_SRCALPHA;
+		//}
+	} else {
+		flag = 0;
+	}
+
+	/* Optimize away operations that don't change anything */
+	if ( (flag == (surface->flags & (SDL_SRCALPHA|SDL_RLEACCELOK))) &&
+	     (!flag || value == oldalpha) ) {
+		return(0);
+	}
+
+	//if(!(flag & SDL_RLEACCELOK) && (surface->flags & SDL_RLEACCEL))
+	//	SDL_UnRLESurface(surface, 1);
+
+	if ( flag ) {
+		//SDL_VideoDevice *video = current_video;
+		//SDL_VideoDevice *this  = current_video;
+
+		surface->flags |= SDL_SRCALPHA;
+		surface->format->alpha = value;
+	//	if ( (surface->flags & SDL_HWACCEL) == SDL_HWACCEL ) {
+	//		if ( (video->SetHWAlpha == NULL) ||
+	//		     (video->SetHWAlpha(this, surface, value) < 0) ) {
+	//			surface->flags &= ~SDL_HWACCEL;
+	//		}
+	//	}
+	//	if ( flag & SDL_RLEACCELOK ) {
+	//	        surface->flags |= SDL_RLEACCELOK;
+	//	} else {
+		        surface->flags &= ~SDL_RLEACCELOK;
+	//	}
+	} else {
+		surface->flags &= ~SDL_SRCALPHA;
+		surface->format->alpha = SDL_ALPHA_OPAQUE;
+	}
+	/*
+	 * The representation for software surfaces is independent of
+	 * per-surface alpha, so no need to invalidate the blit mapping
+	 * if just the alpha value was changed. (If either is 255, we still
+	 * need to invalidate.)
+	 */
+	if((surface->flags & SDL_HWACCEL) == SDL_HWACCEL
+	   || oldflags != surface->flags
+	   || (((oldalpha + 1) ^ (value + 1)) & 0x100))
+		SDL_InvalidateMap(surface->map);
+	return(0);
+}

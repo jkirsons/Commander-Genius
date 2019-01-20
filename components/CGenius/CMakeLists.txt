@@ -45,4 +45,14 @@ set(COMPONENT_SRCDIRS
 set(COMPONENT_ADD_INCLUDEDIRS ".")
 set(COMPONENT_PRIV_REQUIRES SDL SDL_image-1.2.12 SDL_mixer-1.2.12 Utils)
 
+
+
 register_component()
+component_compile_options(
+    -Wno-unused-variable 
+    -Wno-error=maybe-uninitialized 
+    -Wno-missing-field-initializers 
+    -Wno-maybe-uninitialized 
+    -Wno-ignored-qualifiers 
+    -Wno-error=switch
+    )
