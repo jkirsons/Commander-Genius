@@ -123,6 +123,19 @@ typedef enum
      */
     SDL_USEREVENT    = 0x8000,
 
+       SDL_ACTIVEEVENT,			/**< Application loses/gains visibility */
+
+       SDL_EVENT_RESERVEDA,		/**< Reserved for future use.. */
+       SDL_EVENT_RESERVEDB,		/**< Reserved for future use.. */
+       SDL_VIDEORESIZE,			/**< User resized video mode */
+       SDL_VIDEOEXPOSE,			/**< Screen needs to be redrawn */
+       SDL_EVENT_RESERVED2,		/**< Reserved for future use.. */
+       SDL_EVENT_RESERVED3,		/**< Reserved for future use.. */
+       SDL_EVENT_RESERVED4,		/**< Reserved for future use.. */
+       SDL_EVENT_RESERVED5,		/**< Reserved for future use.. */
+       SDL_EVENT_RESERVED6,		/**< Reserved for future use.. */
+       SDL_EVENT_RESERVED7,		/**< Reserved for future use.. */
+
     /**
      *  This last event is only for bounding internal arrays
      */
@@ -466,6 +479,16 @@ typedef struct SDL_SysWMEvent
     SDL_SysWMmsg *msg;  /**< driver dependent data, defined in SDL_syswm.h */
 } SDL_SysWMEvent;
 
+/** The "window resized" event
+ *  When you get this event, you are responsible for setting a new video
+ *  mode with the new width and height.
+ */
+typedef struct SDL_ResizeEvent {
+	Uint8 type;	/**< SDL_VIDEORESIZE */
+	int w;		/**< New width */
+	int h;		/**< New height */
+} SDL_ResizeEvent;
+
 /**
  *  \brief General event structure
  */
@@ -495,7 +518,7 @@ typedef union SDL_Event
     SDL_MultiGestureEvent mgesture; /**< Gesture event data */
     SDL_DollarGestureEvent dgesture; /**< Gesture event data */
     SDL_DropEvent drop;             /**< Drag and drop event data */
-
+	SDL_ResizeEvent resize;
     /* This is necessary for ABI compatibility between Visual C++ and GCC
        Visual C++ will respect the push pack pragma and use 52 bytes for
        this structure, and GCC will use the alignment of the largest datatype

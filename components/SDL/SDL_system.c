@@ -1,4 +1,6 @@
 #include "SDL_system.h"
+#include "SDL_mutex.h"
+
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
@@ -28,6 +30,12 @@ void SDL_Delay(Uint32 ms)
     const TickType_t xDelay = ms / portTICK_PERIOD_MS;
     vTaskDelay( xDelay );
 }
+
+IRAM_ATTR Uint32 SDL_GetTicks(void)
+{
+    return esp_timer_get_time() / 1000;    
+}
+
 /*
 char *SDL_GetError(void)
 {
@@ -114,6 +122,7 @@ int SDL_UnlockMutex(SDL_mutex* mutex)
 {
     return 0;
 }
+
 
 int __mkdir(const char *path, mode_t mode)
 {

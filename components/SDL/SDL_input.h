@@ -44,7 +44,7 @@
  */
 typedef Sint32 SDL_Keycode;
 
-#define SDLK_SCANCODE_MASK 0 //(1<<30)
+#define SDLK_SCANCODE_MASK (1<<30)
 #define SDL_SCANCODE_TO_KEYCODE(X)  (X | SDLK_SCANCODE_MASK)
 
 enum
@@ -525,8 +525,8 @@ extern DECLSPEC SDL_Joystick *SDLCALL SDL_JoystickFromInstanceID(SDL_JoystickID 
  *  Return the name for this currently opened joystick.
  *  If no name can be found, this function returns NULL.
  */
-extern DECLSPEC const char *SDLCALL SDL_JoystickName(SDL_Joystick * joystick);
-
+//extern DECLSPEC const char *SDLCALL SDL_JoystickName(SDL_Joystick * joystick);
+extern DECLSPEC const char * SDLCALL SDL_JoystickName(int device_index);
 /**
  *  Get the player index of an opened joystick, or -1 if it's not available
  *

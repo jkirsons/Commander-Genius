@@ -5,6 +5,7 @@
 #include <stdarg.h>
 
 #include "SDL_system.h"
+#include "SDL_mutex.h"
 
 #include "SDL_input.h"
 #include "SDL_stdinc.h"

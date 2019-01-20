@@ -60,7 +60,7 @@
  * 					at the Logfile.
  *
  */
-int main(int argc, char *argv[])
+int CG_main(int argc, char *argv[])
 {
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)

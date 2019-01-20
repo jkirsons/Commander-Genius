@@ -19,7 +19,12 @@
 #include "spi_lcd.h"
 
 #define SDL_SaveBMP(surface, file) {}
-#define SDL_LoadBMP_RW(src, freesrc) {}
+
+extern DECLSPEC SDL_Surface * SDLCALL SDL_LoadBMP_RW(SDL_RWops *src, int freesrc);
+
+/** Convenience macro -- load a surface from a file */
+#define SDL_LoadBMP(file)	SDL_LoadBMP_RW(SDL_RWFromFile(file, "rb"), 1)
+
 
 typedef struct{
   Uint8 r;
@@ -145,7 +150,7 @@ int SDL_InitSubSystem(Uint32 flags);
 int SDL_FillRect(SDL_Surface *dst, SDL_Rect *dstrect, Uint32 color);
 SDL_Surface *SDL_CreateRGBSurface(Uint32 flags, int width, int height, int depth, Uint32 Rmask, Uint32 Gmask, Uint32 Bmask, Uint32 Amask);
 char *SDL_GetKeyName(SDLKey key);
-Uint32 SDL_GetTicks(void);
+
 
 SDL_Surface *SDL_GetVideoSurface(void);
 Uint32 SDL_MapRGB(SDL_PixelFormat *fmt, Uint8 r, Uint8 g, Uint8 b);
@@ -258,6 +263,8 @@ extern DECLSPEC int SDLCALL SDL_SetColorKey
  */
 extern DECLSPEC SDL_Surface * SDLCALL SDL_ConvertSurface
 			(SDL_Surface *src, SDL_PixelFormat *fmt, Uint32 flags);
+
+extern DECLSPEC SDL_Surface * SDLCALL SDL_DisplayFormat(SDL_Surface *surface);
 
 Uint8 SDL_FindColor(SDL_Palette *pal, Uint8 r, Uint8 g, Uint8 b);
 int SDL_SetAlpha (SDL_Surface *surface, Uint32 flag, Uint8 value);

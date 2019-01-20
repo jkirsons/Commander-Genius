@@ -79,11 +79,6 @@ char *SDL_GetKeyName(SDLKey key)
     return (char *)"";
 }
 
-IRAM_ATTR Uint32 SDL_GetTicks(void)
-{
-    return esp_timer_get_time() / 1000;    
-}
-
 Uint32 SDL_WasInit(Uint32 flags)
 {
     //return (tft == NULL);
@@ -637,4 +632,13 @@ int SDL_SetAlpha (SDL_Surface *surface, Uint32 flag, Uint8 value)
 	   || (((oldalpha + 1) ^ (value + 1)) & 0x100))
 		SDL_InvalidateMap(surface->map);
 	return(0);
+}
+
+/* 
+ * Convert a surface into the video pixel format.
+ */
+SDL_Surface * SDL_DisplayFormat (SDL_Surface *surface)
+{
+
+	return(surface);
 }

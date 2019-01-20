@@ -13,15 +13,11 @@
 
 #include "CGenius.h"
 
-extern "C"
-{
-#include "SDL.h"
-}
 
 void cgTask(void *pvParameters)
 {
     char *argv[]={"", NULL};
-    main(1, argv);
+    CG_main(1, argv);
 }
 
 extern "C" void app_main(void)

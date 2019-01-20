@@ -43,11 +43,12 @@ set(COMPONENT_SRCDIRS
     "engine/keen/vorticon/finale"
     )
 set(COMPONENT_ADD_INCLUDEDIRS ".")
-set(COMPONENT_PRIV_REQUIRES SDL SDL_image-1.2.12 SDL_mixer-1.2.12 Utils)
+set(COMPONENT_REQUIRES SDL SDL_image-1.2.12 SDL_mixer-1.2.12 Utils)
 
 
 
 register_component()
+
 component_compile_options(
     -Wno-unused-variable 
     -Wno-error=maybe-uninitialized 

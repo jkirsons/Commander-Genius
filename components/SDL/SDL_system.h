@@ -46,23 +46,9 @@ int SDL_Init(Uint32 flags);
 void SDL_Quit(void);
 
 void SDL_Delay(Uint32 ms);
+Uint32 SDL_GetTicks(void);
 
 //const char *SDL_GetError(void);
-
-struct SDL_mutex;
-typedef struct SDL_mutex SDL_mutex;
-
-/** The SDL semaphore structure, defined in SDL_sem.c */
-struct SDL_semaphore;
-typedef struct SDL_semaphore SDL_sem;
-
-#define SDL_mutexP(mutex) SDL_LockMutex(mutex)
-#define SDL_mutexV(mutex) SDL_UnlockMutex(mutex)
-
-void SDL_DestroyMutex(SDL_mutex* mutex);
-SDL_mutex* SDL_CreateMutex(void);
-int SDL_LockMutex(SDL_mutex* mutex);
-int SDL_UnlockMutex(SDL_mutex* mutex);
 
 #define MODE_SPI 1
 void SDL_InitSD(void);

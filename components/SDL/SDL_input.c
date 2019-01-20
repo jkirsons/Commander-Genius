@@ -292,7 +292,8 @@ SDL_JoystickFromInstanceID(SDL_JoystickID joyid)
 /*
  * Get the friendly name of this joystick
  */
-const char * SDL_JoystickName(SDL_Joystick * joystick)
+//const char * SDL_JoystickName(SDL_Joystick * joystick)
+const char * SDLCALL SDL_JoystickName(int device_index)
 {
     return NULL;
 }
