@@ -15,5 +15,11 @@ add_definitions(-DZ_HAVE_UNISTD_H)
 
 include($ENV{IDF_PATH}/tools/cmake/project.cmake)
 
+<<<<<<< HEAD
 project(CommanderGenius)
+=======
+set(MAIN_SRCS main/app_main.cpp)
+
+project(cgenius)
+>>>>>>> 9806995ee95010ae6f5521cfdfea47dcbaf0add4
 
