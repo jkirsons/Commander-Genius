@@ -15,5 +15,7 @@ add_definitions(-DZ_HAVE_UNISTD_H)
 
 include($ENV{IDF_PATH}/tools/cmake/project.cmake)
 
+set(MAIN_SRCS main/app_main.cpp)
+
 project(cgenius)
 
