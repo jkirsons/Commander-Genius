@@ -15,5 +15,5 @@ add_definitions(-DZ_HAVE_UNISTD_H)
 
 include($ENV{IDF_PATH}/tools/cmake/project.cmake)
 
-project(cgenius)
+project(CommanderGenius)
 
