@@ -4,6 +4,10 @@
 #include <stdio.h>
 #include <stdarg.h>
 
+#ifdef __cplusplus
+extern "C"{
+#endif 
+
 #include "SDL_system.h"
 #include "SDL_mutex.h"
 
@@ -20,6 +24,10 @@
 #include "SDL_blit.h"
 #include "SDL_event.h"
 #include "SDL_mouse.h"
+
+#ifdef __cplusplus
+}
+#endif
 
 typedef int SDLMod;
 //typedef int SDL_Joystick;

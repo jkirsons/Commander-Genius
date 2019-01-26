@@ -51,7 +51,7 @@
 #define LIST		0x5453494c		/* "LIST" */
 #define FMT		0x20746D66		/* "fmt " */
 #define DATA		0x61746164		/* "data" */
-#define PCM_CODE	1
+//#define PCM_CODE	1
 #define ADPCM_CODE	2
 #define WAVE_MONO	1
 #define WAVE_STEREO	2
