@@ -21,6 +21,7 @@
 */
 #include "SDL_config.h"
 
+#include "esp_pthread.h"
 #include <pthread.h>
 //#include <semaphore.h>
 #include <errno.h>

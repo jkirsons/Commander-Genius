@@ -23,6 +23,7 @@
 
 #include <pthread.h>
 #include <signal.h>
+#include "sys/signal.h"
 
 #include "SDL_thread.h"
 #include "SDL_thread_c.h"
@@ -86,12 +87,12 @@ void SDL_SYS_SetupThread(void)
 	for ( i=0; sig_list[i]; ++i ) {
 		sigaddset(&mask, sig_list[i]);
 	}
-	pthread_sigmask(SIG_BLOCK, &mask, 0);
+//	pthread_sigmask(SIG_BLOCK, &mask, 0);
 
 #ifdef PTHREAD_CANCEL_ASYNCHRONOUS
 	/* Allow ourselves to be asynchronously cancelled */
 	{ int oldstate;
-		pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, &oldstate);
+//		pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, &oldstate);
 	}
 #endif
 }

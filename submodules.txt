@@ -3,3 +3,5 @@
 git submodule add https://github.com/<user>/rock rock
 git submodule update --init --recursive
 
+idf_size.py build/cgenius.map --files
+~/esp/xtensa-esp32-elf/bin/xtensa-esp32-elf-nm build/esp-idf/CGenius/CMakeFiles/idf_component_CGenius.dir/engine/refkeen/kdreams/id_mm.cpp.obj -S --size-sort

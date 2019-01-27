@@ -792,10 +792,11 @@ std::string GetHomeDir()
 	char* home = getenv("HOME");
 #endif
     if(home == nullptr || home[0] == '\0') {
-		passwd* userinfo = getpwuid(getuid());
-		if(userinfo)
-			return userinfo->pw_dir;
-		return ""; // both failed, very strange system...
+//		passwd* userinfo = getpwuid(getuid());
+//		if(userinfo)
+//			return userinfo->pw_dir;
+//		return ""; // both failed, very strange system...
+		return "/sd/data/keen/";
 	}
 	return home;
 #else
@@ -952,10 +953,10 @@ std::string GetAbsolutePath(const std::string &path) {
 	std::string exactpath;
 	if(GetExactFileName(path, exactpath)) {
 		char buf[PATH_MAX];
-		if(realpath(exactpath.c_str(), buf) != NULL) {
-			fix_markend(buf);
-			return buf;
-		} else
+//		if(realpath(exactpath.c_str(), buf) != NULL) {
+//			fix_markend(buf);
+//			return buf;
+//		} else
 			return exactpath;
 	} else
 		return path;
