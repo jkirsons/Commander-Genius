@@ -10,9 +10,9 @@
 #include <base/video/CVideoDriver.h>
 #include <base/video/scaler/CScaler.h>
 #include "GsFont.xpm"
-#include "GsFont2x.xpm"
-#include "GsFont4x.xpm"
-#include "GsFont8x.xpm"
+//#include "GsFont2x.xpm"
+//#include "GsFont4x.xpm"
+//#include "GsFont8x.xpm"
 #include "AlternateFont.xpm"
 #include <string.h>
 #include <cstdlib>
@@ -189,17 +189,20 @@ void GsFont::loadinternalFont(const int size)
     else if(size == 2)
     {
         setFillWidthTable(16);
-        loadinternalFont(GsFont2x_xpm);
+        //loadinternalFont(GsFont2x_xpm);
+        printf("GSFont.cpp - Font not loaded!!!\n");
     }
     else if(size == 4)
     {
         setFillWidthTable(32);
-        loadinternalFont(GsFont4x_xpm);
+        //loadinternalFont(GsFont4x_xpm);
+        printf("GSFont.cpp - Font not loaded!!!\n");
     }
     else if(size == 8)
     {
         setFillWidthTable(64);
-        loadinternalFont(GsFont8x_xpm);
+        //loadinternalFont(GsFont8x_xpm);
+        printf("GSFont.cpp - Font not loaded!!!\n");
     }
     else
     {

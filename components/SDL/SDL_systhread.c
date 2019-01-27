@@ -29,6 +29,11 @@
 #include "SDL_thread_c.h"
 #include "SDL_systhread.h"
 
+#include <esp_pthread.h>
+#include <freertos/FreeRTOS.h>
+#include <freertos/task.h>
+#include <esp_log.h>
+
 /* List of signals to mask in the subthreads */
 static int sig_list[] = {
 	SIGHUP, SIGINT, SIGQUIT, SIGPIPE, SIGALRM, SIGTERM, SIGCHLD, SIGWINCH,
@@ -88,6 +93,10 @@ void SDL_SYS_SetupThread(void)
 		sigaddset(&mask, sig_list[i]);
 	}
 //	pthread_sigmask(SIG_BLOCK, &mask, 0);
+    
+	esp_pthread_cfg_t cfg = esp_pthread_get_default_config();
+    cfg.stack_size = (4 * 1024);
+    esp_pthread_set_cfg(&cfg);
 
 #ifdef PTHREAD_CANCEL_ASYNCHRONOUS
 	/* Allow ourselves to be asynchronously cancelled */

@@ -186,8 +186,10 @@ void SDL_RunThread(void *data)
 	/* Perform any system-dependent setup
 	   - this function cannot fail, and cannot use SDL_SetError()
 	 */
+	printf("Setting up thread\n");
 	SDL_SYS_SetupThread();
 
+	printf("Getting thread ID\n");
 	/* Get the thread id */
 	args = (thread_args *)data;
 	args->info->threadid = SDL_ThreadID();
