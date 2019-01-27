@@ -9,6 +9,7 @@ extern "C"
 
 #include <string.h>
 #include "SDL.h"
+#include "esp_attr.h"
 
 #include "be_cross.h"
 #include "be_st.h"
@@ -51,14 +52,14 @@ const int TXT_ROWS_NUM = 25;
 extern const uint8_t g_vga_8x16TextFont[256*8*16];
 // We can use a union because the memory contents are refreshed on screen mode change
 // (well, not on change between modes 0xD and 0xE, both sharing planar A000:0000)
-static union {
+EXT_RAM_ATTR static union {
 	uint8_t egaGfx[4][0x10000]; // Contents of A000:0000 (4 planes)
 	uint8_t text[TXT_COLS_NUM*TXT_ROWS_NUM*2]; // Textual contents of B800:0000
 } g_sdlVidMem;
 
 // Used for simple caching of EGA graphics (due to page flipping and more)
 // and similarly CGA graphics (modified only at one place)
-static union {
+EXT_RAM_ATTR static union {
 	uint8_t egaGfx[2*GFX_TEX_WIDTH*GFX_TEX_HEIGHT]; // Support 640x200 mode for Catacomb Abyss
 	uint8_t cgaGfx[GFX_TEX_WIDTH*GFX_TEX_HEIGHT];
 } g_sdlHostScrMem, g_sdlHostScrMemCache;

@@ -50,6 +50,7 @@ EMS / XMS unmanaged routines
 =============================================================================
 */
 
+#include "esp_attr.h"
 #include "id_heads.h"
 //#pragma hdrstop
 
@@ -141,7 +142,7 @@ mmblocktype	id0_far mmblocks[MAXBLOCKS]
 // Used to obtain a pointer to some location in mmEmulatedMemSpace
 #define EMULATED_SEG_TO_PTR(seg) (mmEmulatedMemSpace+(seg)*16)
 
-static id0_byte_t mmEmulatedMemSpace[16*(EMULATED_FIRST_PARAGRAPHS+EMULATED_NEAR_PARAGRAPHS+EMULATED_FAR_PARAGRAPHS+EMULATED_EMS_PARAGRAPHS+EMULATED_XMS_PARAGRAPHS)];
+EXT_RAM_ATTR static id0_byte_t mmEmulatedMemSpace[16*(EMULATED_FIRST_PARAGRAPHS+EMULATED_NEAR_PARAGRAPHS+EMULATED_FAR_PARAGRAPHS+EMULATED_EMS_PARAGRAPHS+EMULATED_XMS_PARAGRAPHS)];
 
 //==========================================================================
 
