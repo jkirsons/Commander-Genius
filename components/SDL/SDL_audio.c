@@ -62,11 +62,12 @@ IRAM_ATTR void updateTask(void *arg)
 	  if(!paused){
 		  //memset(out_buffer, 0, SAMPLECOUNT*SAMPLESIZE*2);
 		  //memset(sdl_buffer, 0, SAMPLECOUNT*SAMPLESIZE);
-		  SDL_LockAudio();
-		  (*as.callback)(NULL, sdl_buffer, SAMPLECOUNT*SAMPLESIZE);
-		  SDL_UnlockAudio();
+		  
+		  //SDL_LockAudio();
+		  //(*as.callback)(NULL, sdl_buffer, SAMPLECOUNT*SAMPLESIZE);
+		  //SDL_UnlockAudio();
 
-		  audioToOdroidGoFormat(sdl_buffer, out_buffer, SAMPLECOUNT*SAMPLESIZE);
+		  //audioToOdroidGoFormat(sdl_buffer, out_buffer, SAMPLECOUNT*SAMPLESIZE);
 		  ESP_ERROR_CHECK(i2s_write(I2S_NUM_0, out_buffer, SAMPLECOUNT*SAMPLESIZE*2, &bytesWritten, 500 / portTICK_PERIOD_MS /*portMAX_DELAY*/ ));
 		  
 	  } else {

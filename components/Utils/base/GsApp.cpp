@@ -170,6 +170,7 @@ void GsApp::pollEvents()
 // Load the driver needed to start the game
 bool GsApp::loadDrivers()
 {
+printf("GsApp::loadDrivers\n");    
 	// Init graphics
     if (!gVideoDriver.start()) return false;
 		

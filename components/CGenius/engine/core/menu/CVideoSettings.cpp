@@ -189,8 +189,8 @@ void CVideoSettings::release()
     if( !gVideoDriver.start() ) // Here the same situation
 	{
         // Can't handle all the surfaces...
-	    //gVideoDriver.setVidConfig(oldVidConf);
-	    //gVideoDriver.start();
+	    gVideoDriver.setVidConfig(oldVidConf);
+	    gVideoDriver.start();
 	}
 	
 	gSettings.saveDrvCfg();

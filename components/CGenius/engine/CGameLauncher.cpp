@@ -429,9 +429,9 @@ bool CGameLauncher::start()
 
     // Here it always makes sense to have the mouse cursor active
     SDL_ShowCursor(SDL_ENABLE);
-
+printf("setNativeResolution\n");
     // Set the native resolution
-    gVideoDriver.setNativeResolution(gVideoDriver.getVidConfig().mDisplayRect);
+    //gVideoDriver.setNativeResolution(gVideoDriver.getVidConfig().mDisplayRect);
 
     // In some cases especially when another game was running, the scene wasn't cleaned up.
     // We do this here
