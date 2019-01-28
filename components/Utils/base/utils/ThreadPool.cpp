@@ -26,6 +26,7 @@ ThreadPool::ThreadPool(unsigned int size) {
 	notes << "ThreadPool: creating " << size << " threads ..." << endl;
 	while(availableThreads.size() < size)
 		prepareNewThread();
+	notes << "ThreadPool created" << endl;	
 }
 
 

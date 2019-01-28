@@ -26,6 +26,7 @@
 
 
 #include "id_heads.h"
+#include "esp_attr.h"
 
 extern mapfiletype_modern  mapFile;
 
@@ -87,11 +88,11 @@ typedef struct
 id0_int_t			mapon;
 
 id0_unsigned_t	id0_seg	*mapsegs[3];
-maptype		id0_seg	*mapheaderseg[NUMMAPS];
+EXT_RAM_ATTR maptype		id0_seg	*mapheaderseg[NUMMAPS];
 id0_byte_t		id0_seg	*audiosegs[NUMSNDCHUNKS];
-void		id0_seg	*grsegs[NUMCHUNKS];
+EXT_RAM_ATTR void		id0_seg	*grsegs[NUMCHUNKS];
 
-id0_byte_t		grneeded[NUMCHUNKS];
+EXT_RAM_ATTR id0_byte_t		grneeded[NUMCHUNKS];
 id0_byte_t		ca_levelbit,ca_levelnum;
 
 const id0_char_t		*titleptr[8];

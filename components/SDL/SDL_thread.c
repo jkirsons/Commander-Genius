@@ -233,6 +233,7 @@ DECLSPEC SDL_Thread * SDLCALL SDL_CreateThread(int (SDLCALL *fn)(void *), void *
 		SDL_free(thread);
 		return(NULL);
 	}
+
 	args->func = fn;
 	args->data = data;
 	args->info = thread;

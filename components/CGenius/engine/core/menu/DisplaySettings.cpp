@@ -190,8 +190,8 @@ void DisplaySettings::release()
 
     if( !gVideoDriver.start() ) // Here the same situation
 	{
-		gVideoDriver.setVidConfig(oldVidConf);
-		gVideoDriver.start();
+		//gVideoDriver.setVidConfig(oldVidConf);
+		//gVideoDriver.start();
 	}
 	
 	gSettings.saveDrvCfg();

@@ -109,7 +109,8 @@ void CVideoDriver::initResolutionList()
 #if SDL_VERSION_ATLEAST(2, 0, 0)
     GsRect<Uint16> resolution(GsRect<Uint16>(800, 600));
 #else
-    GsRect<Uint16> resolution(SDL_GetVideoInfo());
+    //GsRect<Uint16> resolution(SDL_GetVideoInfo());
+	GsRect<Uint16> resolution(GsRect<Uint16>(320, 200));
 #endif
 
 #if defined(ANDROID)
@@ -139,7 +140,7 @@ void CVideoDriver::initResolutionList()
 #endif
 
 	// Now on non-handheld devices let's check for more resolutions.
-#if !defined(EMBEDDED)
+#if 0 //!defined(EMBEDDED)
 	for (unsigned int c = 0; c < NUM_MAIN_RESOLUTIONS; c++) {
 		// Depth won't be read anymore! Take the one the system is using actually
 		if (sscanf(ResolutionsList[c], "%hux%hu", &resolution.w, &resolution.h)

@@ -19,6 +19,7 @@
 // ID_RF.C
 
 #include "engine/keen/dreams/dreamsengine.h"
+#include "esp_attr.h"
 
 extern "C"
 {
@@ -210,13 +211,13 @@ id0_unsigned_t	screenpage;			// screen currently being displayed
 id0_unsigned_t	otherpage;
 
 #if GRMODE == EGAGR
-id0_unsigned_t	tilecache[NUMTILE16];
+EXT_RAM_ATTR id0_unsigned_t	tilecache[NUMTILE16];
 #endif
 
-spritelisttype	spritearray[MAXSPRITES],*prioritystart[PRIORITIES],
+EXT_RAM_ATTR spritelisttype	spritearray[MAXSPRITES],*prioritystart[PRIORITIES],
 				*spritefreeptr;
 
-animtiletype	animarray[MAXANIMTILES],*animhead,*animfreeptr;
+EXT_RAM_ATTR animtiletype	animarray[MAXANIMTILES],*animhead,*animfreeptr;
 
 id0_int_t				animfreespot;
 

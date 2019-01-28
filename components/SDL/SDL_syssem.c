@@ -21,7 +21,11 @@
 */
 #include "SDL_config.h"
 
+
+#include "freertos/FreeRTOS.h"
+#include "freertos/semphr.h"
 #include "esp_pthread.h"
+
 #include <pthread.h>
 //#include <semaphore.h>
 #include <errno.h>
@@ -47,12 +51,14 @@ SDL_sem *SDL_CreateSemaphore(Uint32 initial_value)
 {
 	SDL_sem *sem = (SDL_sem *) SDL_malloc(sizeof(SDL_sem));
 	if ( sem ) {
-/*		if ( sem_init(&sem->sem, 0, initial_value) < 0 ) {
+		sem->xSemaphore = xSemaphoreCreateCounting( 10000, initial_value );
+//		if ( sem_init(&sem->sem, 0, initial_value) < 0 ) {
+		if ( sem->xSemaphore == NULL) {
 			SDL_SetError("sem_init() failed");
 			SDL_free(sem);
 			sem = NULL;
 		}
-*/	} else {
+	} else {
 		SDL_OutOfMemory();
 	}
 	return sem;
@@ -62,6 +68,7 @@ void SDL_DestroySemaphore(SDL_sem *sem)
 {
 	if ( sem ) {
 //		sem_destroy(&sem->sem);
+		vSemaphoreDelete(sem->xSemaphore);
 		SDL_free(sem);
 	}
 }
@@ -69,35 +76,34 @@ void SDL_DestroySemaphore(SDL_sem *sem)
 int SDL_SemTryWait(SDL_sem *sem)
 {
 	int retval;
-	retval = 0;
-/*
+
 	if ( ! sem ) {
 		SDL_SetError("Passed a NULL semaphore");
 		return -1;
 	}
 	retval = SDL_MUTEX_TIMEDOUT;
-	if ( sem_trywait(&sem->sem) == 0 ) {
+	//if ( sem_trywait(&sem->sem) == 0 ) {
+	if(xSemaphoreTake(sem->xSemaphore, 0) == pdTRUE) {
 		retval = 0;
 	}
-*/	
 	return retval;
 }
 
 int SDL_SemWait(SDL_sem *sem)
 {
 	int retval;
-	retval = 0;
-/*
+
 	if ( ! sem ) {
 		SDL_SetError("Passed a NULL semaphore");
 		return -1;
 	}
 
-	while ( ((retval = sem_wait(&sem->sem)) == -1) && (errno == EINTR) ) {}
-	if ( retval < 0 ) {
+	//while ( ((retval = sem_wait(&sem->sem)) == -1) && (errno == EINTR) ) {}
+	retval = xSemaphoreTake(sem->xSemaphore, portMAX_DELAY);
+	//if ( retval < 0 ) {
+	if ( retval == pdFALSE ) {
 		SDL_SetError("sem_wait() failed");
 	}
-*/	
 	return retval;
 }
 
@@ -168,13 +174,14 @@ int SDL_SemWaitTimeout(SDL_sem *sem, Uint32 timeout)
 Uint32 SDL_SemValue(SDL_sem *sem)
 {
 	int ret = 0;
-/*	if ( sem ) {
-		sem_getvalue(&sem->sem, &ret);
+	if ( sem ) {
+		//sem_getvalue(&sem->sem, &ret);
+		ret = uxSemaphoreGetCount(sem->xSemaphore);
 		if ( ret < 0 ) {
 			ret = 0;
 		}
 	}
-*/
+
 	return (Uint32)ret;
 }
 
@@ -182,17 +189,21 @@ int SDL_SemPost(SDL_sem *sem)
 {
 	int retval;
 	retval = 0;
-/*
+
 	if ( ! sem ) {
 		SDL_SetError("Passed a NULL semaphore");
 		return -1;
 	}
 
-	retval = sem_post(&sem->sem);
-	if ( retval < 0 ) {
+	//retval = sem_post(&sem->sem);
+	retval = xSemaphoreGive(sem->xSemaphore);
+	//if ( retval < 0 ) {
+	if(retval == pdFALSE) {
 		SDL_SetError("sem_post() failed");
+	} else {
+		retval = -1;
 	}
-*/
+
 	return retval;
 }
 

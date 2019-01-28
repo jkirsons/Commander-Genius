@@ -471,6 +471,8 @@ bool GetExactFileName(const std::string& abs_searchname,
 searchpathlist	basesearchpaths;
 void InitBaseSearchPaths() {
 	basesearchpaths.clear();
+	AddToFileList(&basesearchpaths, "/sd/data/Commander Keen");
+
 #if TARGET_OS_IPHONE || TARGET_IPHONE_SIMULATOR
 	AddToFileList(&basesearchpaths, "${HOME}/Library/Application Support/Commander Genius");
 	AddToFileList(&basesearchpaths, ".");
@@ -843,7 +845,8 @@ std::string GetBinaryDir()
 
 std::string GetTempDir() {
 #ifndef WIN32
-	return "/tmp"; // year, it's so simple :)
+	return "/sd/data/Commander Keen";
+	//return "/tmp"; // year, it's so simple :)
 #else
 	static char buf[1024] = "";
 	if(buf[0] == '\0') { // only do this once

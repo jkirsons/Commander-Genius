@@ -54,6 +54,8 @@ CVideoEngine::~CVideoEngine()
 
 bool CVideoEngine::init()
 {
+   m_Mode = SDL_SWSURFACE;
+/*    
 	// Setup mode depends on some systems.
 #if defined(CAANOO) || defined(WIZ) || defined(DINGOO) || defined(NANONOTE) || defined(ANDROID) || (TARGET_OS_IPHONE) || (TARGET_IPHONE_SIMULATOR)
 	m_Mode = SDL_SWSURFACE;
@@ -66,7 +68,7 @@ bool CVideoEngine::init()
         m_Mode = SDL_HWPALETTE;
     #endif
 #endif
-
+*/
 	// Enable OpenGL
 #ifdef USE_OPENGL
     if(m_VidConfig.mOpengl)
@@ -95,7 +97,7 @@ bool CVideoEngine::init()
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 
 #else
-            m_Mode |= (SDL_DOUBLEBUF | SDL_HWSURFACE);
+            m_Mode |= (SDL_DOUBLEBUF );//| SDL_HWSURFACE);
 #endif
 		}
 	}

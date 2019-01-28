@@ -249,7 +249,7 @@ void SDL_InvalidateMap(SDL_BlitMap *map)
 	map->dst = NULL;
 	map->format_version = (unsigned int)-1;
 	if ( map->table ) {
-		SDL_free(map->table);
+//		SDL_free(map->table);
 		map->table = NULL;
 	}
 }

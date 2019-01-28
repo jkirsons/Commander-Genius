@@ -62,6 +62,11 @@
  */
 int CG_main(int argc, char *argv[])
 {
+    SDL_Init(SDL_INIT_VIDEO);
+    SDL_Delay(100);
+    spi_lcd_clear();
+    SDL_Delay(200);
+    SDL_InitSD();
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 #ifdef ANDROID

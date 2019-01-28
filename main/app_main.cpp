@@ -16,12 +16,12 @@
 
 void cgTask(void *pvParameters)
 {
-    char *argv[]={"", NULL};
+    char *argv[]={"/sd/data/Commander Keen/base1/keen.exe", NULL};
     CG_main(1, argv);
 }
 
 extern "C" void app_main(void)
 //void app_main(void)
 {
-	xTaskCreatePinnedToCore(&cgTask, "cgTask", 12000, NULL, 5, NULL, 0);
+	xTaskCreatePinnedToCore(&cgTask, "cgTask", 32000, NULL, 5, NULL, 0);
 }

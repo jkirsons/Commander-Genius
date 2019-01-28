@@ -141,15 +141,16 @@ void GsSurface::createRGBSurface( const SDL_Rect &rect )
 }
 
 void GsSurface::makeBlitCompatible()
-{
+{   
     // Do not call this if the surface is invalid
     assert(mpSurface != nullptr);
-
+/*  Crashing here
     auto compatibleSfc = gVideoDriver.convertThroughBlitSfc( mpSurface );
 
     SDL_FreeSurface(mpSurface);
 
     mpSurface = compatibleSfc;
+*/    
 }
 
 bool GsSurface::loadImg(const std::string filepath)

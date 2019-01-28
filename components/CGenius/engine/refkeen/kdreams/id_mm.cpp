@@ -111,8 +111,11 @@ id0_boolean_t		mmstarted;
 //void id0_far	*farheap;
 //void		*nearheap;
 
-mmblocktype	id0_far mmblocks[MAXBLOCKS]
-			,id0_far *mmhead,id0_far *mmfree,id0_far *mmrover,id0_far *mmnew;
+EXT_RAM_ATTR mmblocktype	id0_far mmblocks[MAXBLOCKS],
+	id0_far *mmhead,
+	id0_far *mmfree,
+	id0_far *mmrover,
+	id0_far *mmnew;
 
 // A static memory buffer used for our allocations, made out of 16-bytes
 // long paragraphs (each of them beginning with some emulated "segment")

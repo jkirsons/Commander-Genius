@@ -32,6 +32,9 @@
 #include "SDL_stdinc.h"
 #include "SDL_error.h"
 
+#include "freertos/FreeRTOS.h"
+#include "freertos/semphr.h"
+
 #include "begin_code.h"
 /* Set up for C function definitions, even when using C++ */
 #ifdef __cplusplus
@@ -91,6 +94,7 @@ typedef union
 struct SDL_semaphore;
 struct SDL_semaphore {
 	sem_t sem;
+  SemaphoreHandle_t xSemaphore;
 };
 typedef struct SDL_semaphore SDL_sem;
 
