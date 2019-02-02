@@ -27,6 +27,7 @@ bool CVidConfig::operator!=(const CVidConfig& target)
 
 void CVidConfig::reset()
 {
+
 	// Default values
 	mVSync = true;
 

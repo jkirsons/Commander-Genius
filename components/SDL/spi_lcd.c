@@ -382,6 +382,7 @@ void IRAM_ATTR displayTask(void *arg) {
 #ifndef DOUBLE_BUFFER
 		uint8_t *myData=(uint8_t*)currFbPtr;
 #endif
+printf("spi_lcd Lock Attempt\n");
         SDL_LockDisplay();
 		send_header_start(spi, 0, screen_boarder, 320, 240-screen_boarder*2);
 		send_header_cleanup(spi);

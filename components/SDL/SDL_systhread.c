@@ -95,7 +95,7 @@ void SDL_SYS_SetupThread(void)
 //	pthread_sigmask(SIG_BLOCK, &mask, 0);
     
 	esp_pthread_cfg_t cfg = esp_pthread_get_default_config();
-    cfg.stack_size = (4 * 1024);
+    cfg.stack_size = (16 * 1024);
     esp_pthread_set_cfg(&cfg);
 
 #ifdef PTHREAD_CANCEL_ASYNCHRONOUS

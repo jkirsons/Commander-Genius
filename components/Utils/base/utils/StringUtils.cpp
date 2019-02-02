@@ -594,7 +594,7 @@ std::vector<std::string> explode(const std::string& str, const std::string& deli
 void freadstr(std::string& result, size_t maxlen, FILE *fp) {
 	if (!fp) return;
 	
-	char buf[1024];
+	char buf[256];//buf[1024];
 	size_t ret, c;
 	result = "";
 	

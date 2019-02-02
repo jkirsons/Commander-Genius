@@ -305,12 +305,12 @@ bool CVideoDriver::start()
 		retval = mpVideoEngine->init();
         gLogging.textOut("will be using SDL Video<br>");
 	}
-
+Check("createSurfaces");
 	// Now SDL will tell if the bpp works or changes it, if not supported.
 	// this value is updated here!
 	retval &= mpVideoEngine->createSurfaces();
 	m_mustrefresh = true;
-
+Check("createSurfaces - after");
 	return retval;
 }
 

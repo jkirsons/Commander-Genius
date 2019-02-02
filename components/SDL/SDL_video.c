@@ -100,15 +100,15 @@ int SDL_InitSubSystem(Uint32 flags)
 
 SDL_Surface *SDL_CreateRGBSurface(Uint32 flags, int width, int height, int depth, Uint32 Rmask, Uint32 Gmask, Uint32 Bmask, Uint32 Amask)
 {
-
+printf("Surface Depth: %d\n", depth);
     SDL_Surface *surface = (SDL_Surface *)calloc(1, sizeof(SDL_Surface));
     SDL_Rect rect = { .x=0, .y=0, .w=width, .h=height};
     SDL_Color col = {.r=0, .g=0, .b=0, .unused=0};
     SDL_Palette pal =  {.ncolors=1, .colors=&col};
     SDL_PixelFormat* pf = (SDL_PixelFormat*)calloc(1, sizeof(SDL_PixelFormat));
 	pf->palette = &pal;
-	pf->BitsPerPixel = 8;
-	pf->BytesPerPixel = 1;
+	pf->BitsPerPixel = depth;//8;
+	pf->BytesPerPixel = depth/8;
 	pf->Rloss = 0; pf->Gloss = 0; pf->Bloss = 0; pf->Aloss = 0,
 	pf->Rshift = 0; pf->Gshift = 0; pf->Bshift = 0; pf->Ashift = 0;
 	pf->Rmask = 0; pf->Gmask = 0; pf->Bmask = 0; pf->Amask = 0;
@@ -122,7 +122,7 @@ SDL_Surface *SDL_CreateRGBSurface(Uint32 flags, int width, int height, int depth
     surface->pitch = width*(depth/8);
     surface->clip_rect = rect;
     surface->refcount = 1;
-    surface->pixels = heap_caps_malloc(width*height*1, MALLOC_CAP_SPIRAM);
+    surface->pixels = heap_caps_malloc(width*height*(depth/8)/*1*/, MALLOC_CAP_SPIRAM);
     surface->map = malloc(sizeof(SDL_BlitMap));
     surface->map->sw_blit = SDL_SoftBlit;
     surface->map->sw_data = malloc(sizeof(pub_swaccel));
@@ -227,12 +227,17 @@ void SDL_LockDisplay()
         //xSemaphoreGive(display_mutex);
     }
 
-    if (!xSemaphoreTake(display_mutex, 60000 / portTICK_RATE_MS))
+    if (!xSemaphoreTake(display_mutex, 10000 / portTICK_RATE_MS))
     {
-        printf("Timeout waiting for display lock.\n");
-        abort();
+		printf("Timeout waiting for display lock - trying again.\n");
+		vTaskDelay( 100 );
+		if (!xSemaphoreTake(display_mutex, 10000 / portTICK_RATE_MS))
+		{
+			printf("Timeout waiting for display lock.\n");
+			abort();
+		}
     }
-    //printf("L");   
+    printf("Lock \n");   
     //taskYIELD(); 
 }
 
@@ -243,7 +248,7 @@ void SDL_UnlockDisplay()
     if (!xSemaphoreGive(display_mutex))
         abort();
 
-    //printf("U ");
+    printf("Unlock\n");
     //taskYIELD();
 }
 

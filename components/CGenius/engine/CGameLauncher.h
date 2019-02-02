@@ -28,8 +28,8 @@
 #include "gamedownloader.h"
 
 // The directory/path to start the search at
-#define DIR_ROOT        "."
-#define DIR_GAMES       "games"
+#define DIR_ROOT        "/sd/data/Commander Keen/"
+#define DIR_GAMES       "/sd/data/Commander Keen/"
 // The number of sub directories to search below the starting directory
 #define DEPTH_MAX_ROOT  1
 #define DEPTH_MAX_GAMES 2

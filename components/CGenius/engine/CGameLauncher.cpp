@@ -356,12 +356,14 @@ bool CGameLauncher::scanExecutables(const std::string& path)
     bool result = false;
 
     gLogging.ftextOut("Search: %s<br>", path.c_str() );
-
+printf("Lock Attempt\n");
+SDL_LockDisplay();   
     // Episode 1-6 and 7 stands for Keen Dreams
     for(int i = 1; i <= 7; ++i)
     {
 		CExeFile executable;
         // Load the exe into memory or a python script
+     
 		if(!executable.readData(i, path))
         {
             if(!executable.readMainPythonScript(i, path))
@@ -417,7 +419,7 @@ bool CGameLauncher::scanExecutables(const std::string& path)
 		}
 		result = true;
 	}
-
+SDL_UnlockDisplay();
     return result;
 }
 
@@ -429,7 +431,7 @@ bool CGameLauncher::start()
 
     // Here it always makes sense to have the mouse cursor active
     SDL_ShowCursor(SDL_ENABLE);
-printf("setNativeResolution\n");
+    Check("CGameLauncher::start()");
     // Set the native resolution
     //gVideoDriver.setNativeResolution(gVideoDriver.getVidConfig().mDisplayRect);
 
@@ -437,7 +439,7 @@ printf("setNativeResolution\n");
     // We do this here
     GsWeakSurface blit(gVideoDriver.getBlitSurface());
     blit.fillRGB(0, 0, 0);
-
+Check("CGameLauncher 2");
     // Load the graphics for menu and background.
     // Resources for the main menu
     // This is only for the menu. We only need one fontmap for the list of games and some buttons
@@ -445,7 +447,7 @@ printf("setNativeResolution\n");
     GsFont &Font = gGraphics.getFont(0);
 
     const auto height = gVideoDriver.getHeight();
-
+Check("CGameLauncher 3");
     // Depending on the height the font is loaded as scaled
     // so readability is better on higher resolutions.
     if(height >= 1920)
@@ -464,7 +466,7 @@ printf("setNativeResolution\n");
     {
         Font.loadinternalFont(1);
     }
-
+Check("CGameLauncher 4");
     struct GamesScan : public Action
     {
         CGameLauncher &mGameLauncher;
@@ -487,7 +489,7 @@ printf("setNativeResolution\n");
     mGameScanner.setStyle(PROGRESS_STYLE_TEXT);
     mGameScanner.RunLoadActionBackground(new GamesScan(*this));
     mGameScanner.start();
-
+Check("CGameLauncher 5");
     return true;
 }
 

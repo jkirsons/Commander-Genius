@@ -63,12 +63,14 @@ SDL_Surface *loadfromXPMData(const char **data, const SDL_PixelFormat *format, c
 
 	// Read the dimensions and amount of colors
 	sscanf((const char*)data[0], "%d %d %d", &width, &height, &colors);
-
+Check("loadfromXPMData");
+printf("loadfromXPMData %d %d %d, bpp: %d\n", width, height, colors, format->BitsPerPixel);
 	// Create the surface
 	SDL_Surface *sfc = SDL_CreateRGBSurface( SDL_SWSURFACE, width, height,
 			  	  	  	  	  	  	  	  	 format->BitsPerPixel,
 			  	  	  	  	  	  	  	  	 format->Rmask, format->Gmask,
 			  	  	  	  	  	  	  	  	 format->Bmask, 0 );
+Check("loadfromXPMData 2");
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
     bool usesAlpha = false;
@@ -76,6 +78,7 @@ SDL_Surface *loadfromXPMData(const char **data, const SDL_PixelFormat *format, c
     bool usesAlpha = (sfc->flags & SDL_SRCALPHA);
 #endif
 	const Uint32 colorkey = SDL_MapRGB(sfc->format, 0xFF, 0x00, 0xFF);
+Check("loadfromXPMData 3");
 
 	if(!usesAlpha)
 #if SDL_VERSION_ATLEAST(2, 0, 0)
@@ -83,6 +86,7 @@ SDL_Surface *loadfromXPMData(const char **data, const SDL_PixelFormat *format, c
 #else
 		SDL_SetColorKey( sfc, SDL_SRCCOLORKEY|SDL_RLEACCEL, colorkey );
 #endif
+Check("loadfromXPMData 4");
 
 	// Read the data and pass it to the surface
 	SDL_LockSurface(sfc);
@@ -100,6 +104,7 @@ SDL_Surface *loadfromXPMData(const char **data, const SDL_PixelFormat *format, c
 		color = strtol( colorCode, NULL, 16 );
 		colorMap[charCode] = color;
 	}
+Check("loadfromXPMData 5");
 
 
 	Uint32 *pixel = static_cast<Uint32*>(sfc->pixels);
@@ -139,6 +144,7 @@ SDL_Surface *loadfromXPMData(const char **data, const SDL_PixelFormat *format, c
 			pixel++;
 		}
 	}
+Check("loadfromXPMData 6");
 
 	SDL_UnlockSurface(sfc);
 
