@@ -71,7 +71,7 @@ curl_off_t getfiletime(const char *filename, FILE *error_stream)
   }
 #else
   struct_stat statbuf;
-  if(-1 != stat(filename, &statbuf)) {
+  if(-1 != __stat(filename, &statbuf)) {
     result = (curl_off_t)statbuf.st_mtime;
   }
   else if(errno != ENOENT) {

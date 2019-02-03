@@ -4,6 +4,7 @@
  */
 #include <base/GsLogging.h>
 #include <cstdio>
+#include "SDL.h"
 
 #define LZ_STARTBITS        9
 #define LZ_ERRORCODE        256
@@ -43,7 +44,7 @@ unsigned int lz_readbits(FILE *lzfile, unsigned char numbits, unsigned char rese
 	{
         if (!mask)
         {
-			byte = fgetc(lzfile);
+			byte = __fgetc(lzfile);
 			mask = 0x80;
         }
 		
@@ -85,15 +86,15 @@ char lz_decompress(FILE *lzfile, unsigned char *outbuffer)
 	char addtodict;
 	
 	// Get the decompressed file-size
-	decsize = fgetc(lzfile);
-	decsize += fgetc(lzfile) << 8;
-	decsize += fgetc(lzfile) << 16;
-	decsize += fgetc(lzfile) << 24;
+	decsize = __fgetc(lzfile);
+	decsize += __fgetc(lzfile) << 8;
+	decsize += __fgetc(lzfile) << 16;
+	decsize += __fgetc(lzfile) << 24;
 	
 	// Get the length of the maximum dictionary size
 	
-	maxdictcodewords = fgetc(lzfile);
-	maxdictcodewords += fgetc(lzfile) << 8;
+	maxdictcodewords = __fgetc(lzfile);
+	maxdictcodewords += __fgetc(lzfile) << 8;
 	
 	maxdictsize = ((1<<maxdictcodewords)+1);
 	

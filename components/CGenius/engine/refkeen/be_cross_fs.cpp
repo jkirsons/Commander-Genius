@@ -629,7 +629,7 @@ void BE_Cross_close(BE_FILE_T &fp);
 			BE_Cross_safeandfastcstringcopy_3strs(fullpath, fullpathEnd, searchdir, "/", direntry->d_name);
 
 			closedir(dir);
-			return fopen(fullpath, isOverwriteRequest ? "wb" : "rb");
+			return __fopen(fullpath, isOverwriteRequest ? "wb" : "rb");
 		}
 	}
 	closedir(dir);
@@ -652,7 +652,7 @@ void BE_Cross_close(BE_FILE_T &fp);
 	--fullpathPtr;
 	*fullpathPtr = '\0';
 
-    return fopen(fullpath, "wb");*/
+    return __fopen(fullpath, "wb");*/
 }
 
 extern char *dreamsengine_datapath;
@@ -741,7 +741,7 @@ static bool BEL_Cross_CheckGameFileDetails(const BE_GameFileDetails_T *details, 
                 }
 
 
-                fclose(exeFp);
+                __fclose(exeFp);
 				if (!success)
 				{
 					free(decompexebuffer);
@@ -821,12 +821,12 @@ int BE_Cross_GetSortedRewritableFilenames_AsUpperCase(char *outFilenames, int ma
 	const char *searchpaths[] = {g_be_selectedGameInstallation->writableVanillaFilesPath, g_be_selectedGameInstallation->path};
 	for (int loopvar = 0; loopvar < (int)(sizeof(searchpaths)/sizeof(*searchpaths)); ++loopvar)
 	{
-		dir = opendir(searchpaths[loopvar]);
+		dir = __opendir(searchpaths[loopvar]);
 		if (!dir)
 		{
 			continue;
 		}
-		for (direntry = readdir(dir); direntry; direntry = readdir(dir))
+		for (direntry = __readdir(dir); direntry; direntry = readdir(dir))
 		{
 			size_t len = strlen(direntry->d_name);
 			if ((len < sufLen) || BE_Cross_strcasecmp(direntry->d_name+len-sufLen, suffix))
@@ -1059,21 +1059,21 @@ void BE_Cross_SelectGameInstallation(int gameVerVal)
 
 int32_t BE_Cross_FileLengthFromHandle(BE_FILE_T fp)
 {
-	long int origOffset = ftell(fp);
+	long int origOffset = __ftell(fp);
 	fseek(fp, 0, SEEK_END);
-	long int len = ftell(fp);
+	long int len = __ftell(fp);
 	fseek(fp, origOffset, SEEK_SET);
 	return len;
 }
 
 size_t BE_Cross_readInt8LE(BE_FILE_T fp, void *ptr)
 {
-	return fread(ptr, 1, 1, fp);
+	return __fread(ptr, 1, 1, fp);
 }
 
 size_t BE_Cross_readInt16LE(BE_FILE_T fp, void *ptr)
 {
-	size_t bytesread = fread(ptr, 1, 2, fp);
+	size_t bytesread = __fread(ptr, 1, 2, fp);
 #ifdef REFKEEN_ARCH_BIG_ENDIAN
 	if (bytesread == 2)
 	{
@@ -1085,7 +1085,7 @@ size_t BE_Cross_readInt16LE(BE_FILE_T fp, void *ptr)
 
 size_t BE_Cross_readInt32LE(BE_FILE_T fp, void *ptr)
 {
-	size_t bytesread = fread(ptr, 1, 4, fp);
+	size_t bytesread = __fread(ptr, 1, 4, fp);
 #ifdef REFKEEN_ARCH_BIG_ENDIAN
 	if (bytesread == 4)
 	{
@@ -1097,15 +1097,15 @@ size_t BE_Cross_readInt32LE(BE_FILE_T fp, void *ptr)
 
 size_t BE_Cross_readInt8LEBuffer(BE_FILE_T fp, void *ptr, size_t nbyte)
 {
-	return fread(ptr, 1, nbyte, fp);
+	return __fread(ptr, 1, nbyte, fp);
 }
 
 size_t BE_Cross_readInt16LEBuffer(BE_FILE_T fp, void *ptr, size_t nbyte)
 {
 #ifndef REFKEEN_ARCH_BIG_ENDIAN
-	return fread(ptr, 1, nbyte, fp);
+	return __fread(ptr, 1, nbyte, fp);
 #else
-	size_t result = fread(ptr, 1, nbyte, fp);
+	size_t result = __fread(ptr, 1, nbyte, fp);
 	for (uint16_t *currptr = (uint16_t *)ptr, *endptr = currptr + result/2; currptr < endptr; ++currptr)
 	{
 		*currptr = BE_Cross_Swap16LE(*currptr);
@@ -1117,9 +1117,9 @@ size_t BE_Cross_readInt16LEBuffer(BE_FILE_T fp, void *ptr, size_t nbyte)
 size_t BE_Cross_readInt32LEBuffer(BE_FILE_T fp, void *ptr, size_t nbyte)
 {
 #ifndef REFKEEN_ARCH_BIG_ENDIAN
-	return fread(ptr, 1, nbyte, fp);
+	return __fread(ptr, 1, nbyte, fp);
 #else
-	size_t result = fread(ptr, 1, nbyte, fp);
+	size_t result = __fread(ptr, 1, nbyte, fp);
 	for (uint32_t *currptr = (uint32_t *)ptr, *endptr = currptr + result/4; currptr < endptr; ++currptr)
 	{
 		*currptr = BE_Cross_Swap32LE(*currptr);
@@ -1132,9 +1132,9 @@ size_t BE_Cross_readInt32LEBuffer(BE_FILE_T fp, void *ptr, size_t nbyte)
 size_t BE_Cross_readInt24LEBuffer(BE_FILE_T fp, void *ptr, size_t nbyte)
 {
 #ifndef REFKEEN_ARCH_BIG_ENDIAN
-	return fread(ptr, 1, nbyte, fp);
+	return __fread(ptr, 1, nbyte, fp);
 #else
-	size_t result = fread(ptr, 1, nbyte, fp);
+	size_t result = __fread(ptr, 1, nbyte, fp);
 	uint8_t tempbyte;
 	// Let's ensure there's no buffer overflow in case nbyte is not divisible by 3
 	for (uint8_t *currbyteptr = (uint8_t *)ptr, *endbyteptr = currbyteptr + (nbyte/3)*3; currbyteptr < endbyteptr; currbyteptr += 3)
@@ -1149,44 +1149,44 @@ size_t BE_Cross_readInt24LEBuffer(BE_FILE_T fp, void *ptr, size_t nbyte)
 
 size_t BE_Cross_writeInt8LE(BE_FILE_T fp, const void *ptr)
 {
-	return fwrite(ptr, 1, 1, fp);
+	return __fwrite(ptr, 1, 1, fp);
 }
 
 size_t BE_Cross_writeInt16LE(BE_FILE_T fp, const void *ptr)
 {
 #ifndef REFKEEN_ARCH_BIG_ENDIAN
-	return fwrite(ptr, 1, 2, fp);
+	return __fwrite(ptr, 1, 2, fp);
 #else
 	uint16_t val = BE_Cross_Swap16LE(*(uint16_t *) ptr);
-	return fwrite(&val, 1, 2, fp);
+	return __fwrite(&val, 1, 2, fp);
 #endif
 }
 
 size_t BE_Cross_writeInt32LE(BE_FILE_T fp, const void *ptr)
 {
 #ifndef REFKEEN_ARCH_BIG_ENDIAN
-	return fwrite(ptr, 1, 4, fp);
+	return __fwrite(ptr, 1, 4, fp);
 #else
 	uint32_t val = BE_Cross_Swap32LE(*(uint32_t *) ptr);
-	return fwrite(&val, 1, 4, fp);
+	return __fwrite(&val, 1, 4, fp);
 #endif
 }
 
 size_t BE_Cross_writeInt8LEBuffer(BE_FILE_T fp, const void *ptr, size_t nbyte)
 {
-	return fwrite(ptr, 1, nbyte, fp);
+	return __fwrite(ptr, 1, nbyte, fp);
 }
 
 size_t BE_Cross_writeInt16LEBuffer(BE_FILE_T fp, const void *ptr, size_t nbyte)
 {
 #ifndef REFKEEN_ARCH_BIG_ENDIAN
-	return fwrite(ptr, 1, nbyte, fp);
+	return __fwrite(ptr, 1, nbyte, fp);
 #else
 	size_t result = 0;
 	for (uint16_t *currptr = (uint16_t *)ptr, *endptr = currptr + nbyte/2; currptr < endptr; ++currptr)
 	{
 		uint16_t val = BE_Cross_Swap16LE(*currptr);
-		size_t bytesread = fwrite(&val, 1, 2, fp);
+		size_t bytesread = __fwrite(&val, 1, 2, fp);
 		result += bytesread;
 		if (bytesread < 2)
 		{
@@ -1203,7 +1203,7 @@ size_t BE_Cross_writeInt16LEBuffer(BE_FILE_T fp, const void *ptr, size_t nbyte)
 size_t BE_Cross_read_ ## ourSampleEnum ## _From16LE (BE_FILE_T fp, ourSampleEnum *ptr) \
 { \
 	uint16_t val; \
-	size_t bytesread = fread(&val, 1, 2, fp); \
+	size_t bytesread = __fread(&val, 1, 2, fp); \
 	if (bytesread == 2) \
 	{ \
 		*ptr = (ourSampleEnum)BE_Cross_Swap16LE(val); \
@@ -1214,7 +1214,7 @@ size_t BE_Cross_read_ ## ourSampleEnum ## _From16LE (BE_FILE_T fp, ourSampleEnum
 size_t BE_Cross_write_ ## ourSampleEnum ## _To16LE (BE_FILE_T fp, const ourSampleEnum *ptr) \
 { \
 	uint16_t val = BE_Cross_Swap16LE((uint16_t)(*ptr)); \
-	return fwrite(&val, 1, 2, fp); \
+	return __fwrite(&val, 1, 2, fp); \
 }
 
 BE_CROSS_IMPLEMENT_FP_READWRITE_16LE_FUNCS(SDMode)
@@ -1228,7 +1228,7 @@ BE_CROSS_IMPLEMENT_FP_READWRITE_16LE_FUNCS(dirtype)
 size_t BE_Cross_read_boolean_From16LE(BE_FILE_T fp, bool *ptr)
 {
 	uint16_t val;
-	size_t bytesread = fread(&val, 1, 2, fp);
+	size_t bytesread = __fread(&val, 1, 2, fp);
 	if (bytesread == 2)
 	{
 		*ptr = val; // No need to swap byte-order here
@@ -1242,7 +1242,7 @@ size_t BE_Cross_read_booleans_From16LEBuffer(BE_FILE_T fp, bool *ptr, size_t nby
 	size_t totalbytesread = 0, currbytesread;
 	for (size_t curbyte = 0; curbyte < nbyte; curbyte += 2, ++ptr)
 	{
-		currbytesread = fread(&val, 1, 2, fp);
+		currbytesread = __fread(&val, 1, 2, fp);
 		totalbytesread += currbytesread;
 		if (currbytesread < 2)
 		{
@@ -1257,7 +1257,7 @@ size_t BE_Cross_read_booleans_From16LEBuffer(BE_FILE_T fp, bool *ptr, size_t nby
 size_t BE_Cross_write_boolean_To16LE(BE_FILE_T fp, const bool *ptr)
 {
 	uint16_t val = BE_Cross_Swap16LE((uint16_t)(*ptr)); // Better to swap just in case...
-	return fwrite(&val, 1, 2, fp);
+	return __fwrite(&val, 1, 2, fp);
 }
 
 size_t BE_Cross_write_booleans_To16LEBuffer(BE_FILE_T fp, const bool *ptr, size_t nbyte)
@@ -1267,7 +1267,7 @@ size_t BE_Cross_write_booleans_To16LEBuffer(BE_FILE_T fp, const bool *ptr, size_
 	for (size_t curbyte = 0; curbyte < nbyte; curbyte += 2, ++ptr)
 	{
 		val = BE_Cross_Swap16LE((uint16_t)(*ptr)); // Better to swap just in case...
-		currbyteswritten = fwrite(&val, 1, 2, fp);
+		currbyteswritten = __fwrite(&val, 1, 2, fp);
 		totalbyteswritten += currbyteswritten;
 		if (currbyteswritten < 2)
 		{

@@ -16,7 +16,7 @@
 
 #if defined(__APPLE__) || defined(IOAPI_NO_64)
 // In darwin and perhaps other BSD variants off_t is a 64 bit value, hence no need for specific 64 bit functions
-#define FOPEN_FUNC(filename, mode) fopen(filename, mode)
+#define FOPEN_FUNC(filename, mode) __fopen(filename, mode)
 #define FTELLO_FUNC(stream) ftello(stream)
 #define FSEEKO_FUNC(stream, offset, origin) fseeko(stream, offset, origin)
 #else
@@ -106,7 +106,7 @@ static voidpf ZCALLBACK fopen_file_func (voidpf opaque, const char* filename, in
         mode_fopen = "wb";
 
     if ((filename!=NULL) && (mode_fopen != NULL))
-        file = fopen(filename, mode_fopen);
+        file = __fopen(filename, mode_fopen);
     return file;
 }
 
@@ -146,7 +146,7 @@ static uLong ZCALLBACK fwrite_file_func (voidpf opaque, voidpf stream, const voi
 static long ZCALLBACK ftell_file_func (voidpf opaque, voidpf stream)
 {
     long ret;
-    ret = ftell((FILE *)stream);
+    ret = __ftell((FILE *)stream);
     return ret;
 }
 
@@ -217,7 +217,7 @@ static long ZCALLBACK fseek64_file_func (voidpf  opaque, voidpf stream, ZPOS64_T
 static int ZCALLBACK fclose_file_func (voidpf opaque, voidpf stream)
 {
     int ret;
-    ret = fclose((FILE *)stream);
+    ret = __fclose((FILE *)stream);
     return ret;
 }
 

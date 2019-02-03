@@ -232,7 +232,7 @@ char *getpass_r(const char *prompt, /* prompt to display */
   disabled = ttyecho(FALSE, fd); /* disable terminal echo */
 
   fputs(prompt, stderr);
-  nread = read(fd, password, buflen);
+  nread = __read(fd, password, buflen);
   if(nread > 0)
     password[--nread] = '\0'; /* zero terminate where enter is stored */
   else
@@ -245,7 +245,7 @@ char *getpass_r(const char *prompt, /* prompt to display */
   }
 
   if(STDIN_FILENO != fd)
-    close(fd);
+    __close(fd);
 
   return password; /* return pointer to buffer */
 }

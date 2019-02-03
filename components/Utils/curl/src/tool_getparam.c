@@ -776,12 +776,12 @@ ParameterError getparameter(const char *flag, /* f or -long-flag */
 
       case 'v': /* --stderr */
         if(strcmp(nextarg, "-")) {
-          FILE *newfile = fopen(nextarg, FOPEN_WRITETEXT);
+          FILE *newfile = __fopen(nextarg, FOPEN_WRITETEXT);
           if(!newfile)
             warnf(global, "Failed to open %s!\n", nextarg);
           else {
             if(global->errors_fopened)
-              fclose(global->errors);
+              __fclose(global->errors);
             global->errors = newfile;
             global->errors_fopened = TRUE;
           }
@@ -1315,7 +1315,7 @@ ParameterError getparameter(const char *flag, /* f or -long-flag */
             set_binmode(stdin);
           }
           else {
-            file = fopen(p, "rb");
+            file = __fopen(p, "rb");
             if(!file)
               warnf(global,
                     "Couldn't read data from file \"%s\", this makes "
@@ -1325,7 +1325,7 @@ ParameterError getparameter(const char *flag, /* f or -long-flag */
           err = file2memory(&postdata, &size, file);
 
           if(file && (file != stdin))
-            fclose(file);
+            __fclose(file);
           if(err)
             return err;
         }
@@ -1381,7 +1381,7 @@ ParameterError getparameter(const char *flag, /* f or -long-flag */
             set_binmode(stdin);
         }
         else {
-          file = fopen(nextarg, "rb");
+          file = __fopen(nextarg, "rb");
           if(!file)
             warnf(global, "Couldn't read data from file \"%s\", this makes "
                   "an empty POST.\n", nextarg);
@@ -1397,7 +1397,7 @@ ParameterError getparameter(const char *flag, /* f or -long-flag */
         }
 
         if(file && (file != stdin))
-          fclose(file);
+          __fclose(file);
         if(err)
           return err;
 
@@ -1745,7 +1745,7 @@ ParameterError getparameter(const char *flag, /* f or -long-flag */
             free(string);
           }
           if(!use_stdin)
-            fclose(file);
+            __fclose(file);
           if(err)
             return err;
         }
@@ -2069,12 +2069,12 @@ ParameterError getparameter(const char *flag, /* f or -long-flag */
         }
         else {
           fname = nextarg;
-          file = fopen(nextarg, FOPEN_READTEXT);
+          file = __fopen(nextarg, FOPEN_READTEXT);
         }
         Curl_safefree(config->writeout);
         err = file2string(&config->writeout, file);
         if(file && (file != stdin))
-          fclose(file);
+          __fclose(file);
         if(err)
           return err;
         if(!config->writeout)

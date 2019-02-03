@@ -146,18 +146,18 @@ static curl_off_t vms_realfilesize(const char *name,
   FILE * file;
 
   /* !checksrc! disable FOPENMODE 1 */
-  file = fopen(name, "r"); /* VMS */
+  file = __fopen(name, "r"); /* VMS */
   if(file == NULL) {
     return 0;
   }
   count = 0;
   ret_stat = 1;
   while(ret_stat > 0) {
-    ret_stat = fread(buffer, 1, sizeof(buffer), file);
+    ret_stat = __fread(buffer, 1, sizeof(buffer), file);
     if(ret_stat != 0)
       count += ret_stat;
   }
-  fclose(file);
+  __fclose(file);
 
   return count;
 }
@@ -342,7 +342,7 @@ static CURLcode operate_do(struct GlobalConfig *global,
   if(config->headerfile) {
     /* open file for output: */
     if(strcmp(config->headerfile, "-")) {
-      FILE *newfile = fopen(config->headerfile, "wb");
+      FILE *newfile = __fopen(config->headerfile, "wb");
       if(!newfile) {
         warnf(config->global, "Failed to open %s\n", config->headerfile);
         result = CURLE_WRITE_ERROR;
@@ -608,7 +608,7 @@ static CURLcode operate_do(struct GlobalConfig *global,
                of the file as it is now and open it for append instead */
             struct_stat fileinfo;
             /* VMS -- Danger, the filesize is only valid for stream files */
-            if(0 == stat(outfile, &fileinfo))
+            if(0 == __stat(outfile, &fileinfo))
               /* set offset to current file size: */
               config->resume_from = fileinfo.st_size;
             else
@@ -620,11 +620,11 @@ static CURLcode operate_do(struct GlobalConfig *global,
 #ifdef __VMS
             /* open file for output, forcing VMS output format into stream
                mode which is needed for stat() call above to always work. */
-            FILE *file = fopen(outfile, config->resume_from?"ab":"wb",
+            FILE *file = __fopen(outfile, config->resume_from?"ab":"wb",
                                "ctx=stm", "rfm=stmlf", "rat=cr", "mrs=0");
 #else
             /* open file for output: */
-            FILE *file = fopen(outfile, config->resume_from?"ab":"wb");
+            FILE *file = __fopen(outfile, config->resume_from?"ab":"wb");
 #endif
             if(!file) {
               helpf(global->errors, "Can't open '%s'!\n", outfile);
@@ -670,28 +670,28 @@ static CURLcode operate_do(struct GlobalConfig *global,
 #ifdef __VMS
           /* Calculate the real upload size for VMS */
           infd = -1;
-          if(stat(uploadfile, &fileinfo) == 0) {
+          if(__stat(uploadfile, &fileinfo) == 0) {
             fileinfo.st_size = VmsSpecialSize(uploadfile, &fileinfo);
             switch(fileinfo.st_fab_rfm) {
             case FAB$C_VAR:
             case FAB$C_VFC:
             case FAB$C_STMCR:
-              infd = open(uploadfile, O_RDONLY | O_BINARY);
+              infd = __open(uploadfile, O_RDONLY | O_BINARY);
               break;
             default:
-              infd = open(uploadfile, O_RDONLY | O_BINARY,
+              infd = __open(uploadfile, O_RDONLY | O_BINARY,
                           "rfm=stmlf", "ctx=stm");
             }
           }
           if(infd == -1)
 #else
-          infd = open(uploadfile, O_RDONLY | O_BINARY);
+          infd = __open(uploadfile, O_RDONLY | O_BINARY);
           if((infd == -1) || fstat(infd, &fileinfo))
 #endif
           {
             helpf(global->errors, "Can't open '%s'!\n", uploadfile);
             if(infd != -1) {
-              close(infd);
+              __close(infd);
               infd = STDIN_FILENO;
             }
             result = CURLE_READ_ERROR;
@@ -1714,13 +1714,13 @@ static CURLcode operate_do(struct GlobalConfig *global,
                 }
                 /* now seek to the end of the file, the position where we
                    just truncated the file in a large file-safe way */
-                rc = fseek(outs.stream, 0, SEEK_END);
+                rc = __fseek(outs.stream, 0, SEEK_END);
 #else
                 /* ftruncate is not available, so just reposition the file
                    to the location we would have truncated it. This won't
                    work properly with large files on 32-bit systems, but
                    most of those will have ftruncate. */
-                rc = fseek(outs.stream, (long)outs.init, SEEK_SET);
+                rc = __fseek(outs.stream, (long)outs.init, SEEK_SET);
 #endif
                 if(rc) {
                   if(!global->mute)
@@ -1836,7 +1836,7 @@ static CURLcode operate_do(struct GlobalConfig *global,
 
         /* Close the file */
         if(outs.fopened && outs.stream) {
-          int rc = fclose(outs.stream);
+          int rc = __fclose(outs.stream);
           if(!result && rc) {
             /* something went wrong in the writing process */
             result = CURLE_WRITE_ERROR;
@@ -1904,7 +1904,7 @@ static CURLcode operate_do(struct GlobalConfig *global,
         Curl_safefree(this_url);
 
         if(infdopen)
-          close(infd);
+          __close(infd);
 
         if(metalink) {
           /* Should exit if error is fatal. */
@@ -1997,7 +1997,7 @@ static CURLcode operate_do(struct GlobalConfig *global,
 
   /* Close function-local opened file descriptors */
   if(heads.fopened && heads.stream)
-    fclose(heads.stream);
+    __fclose(heads.stream);
 
   if(heads.alloc_filename)
     Curl_safefree(heads.filename);

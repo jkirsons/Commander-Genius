@@ -86,7 +86,7 @@ size_t tool_header_cb(char *ptr, size_t size, size_t nmemb, void *userdata)
    */
 
   if(heads->config->headerfile && heads->stream) {
-    size_t rc = fwrite(ptr, size, nmemb, heads->stream);
+    size_t rc = __fwrite(ptr, size, nmemb, heads->stream);
     if(rc != cb)
       return rc;
     /* flush the stream to send off what we got earlier */
@@ -135,7 +135,7 @@ size_t tool_header_cb(char *ptr, size_t size, size_t nmemb, void *userdata)
           int rc;
           /* already opened and possibly written to */
           if(outs->fopened)
-            fclose(outs->stream);
+            __fclose(outs->stream);
           outs->stream = NULL;
 
           /* rename the initial file name to the new file name */
@@ -180,11 +180,11 @@ size_t tool_header_cb(char *ptr, size_t size, size_t nmemb, void *userdata)
     if(value) {
       size_t namelen = value - ptr;
       fprintf(outs->stream, BOLD "%.*s" BOLDOFF ":", namelen, ptr);
-      fwrite(&value[1], cb - namelen - 1, 1, outs->stream);
+      __fwrite(&value[1], cb - namelen - 1, 1, outs->stream);
     }
     else
       /* not "handled", just show it */
-      fwrite(ptr, cb, 1, outs->stream);
+      __fwrite(ptr, cb, 1, outs->stream);
   }
   return cb;
 }

@@ -94,8 +94,8 @@ static void main_checkfds(void)
     if(pipe(fd) < 0)
       return;   /* Out of handles. This isn't really a big problem now, but
                    will be when we try to create a socket later. */
-  close(fd[0]);
-  close(fd[1]);
+  __close(fd[0]);
+  __close(fd[1]);
 #endif
 }
 
@@ -197,11 +197,11 @@ static void free_globalconfig(struct GlobalConfig *config)
   Curl_safefree(config->trace_dump);
 
   if(config->errors_fopened && config->errors)
-    fclose(config->errors);
+    __fclose(config->errors);
   config->errors = NULL;
 
   if(config->trace_fopened && config->trace_stream)
-    fclose(config->trace_stream);
+    __fclose(config->trace_stream);
   config->trace_stream = NULL;
 
   Curl_safefree(config->libcurl);

@@ -2895,7 +2895,7 @@ USL_CtlHButtonCustom(UserCall call,id0_word_t i,id0_word_t n)
 			Quit("Bad help button number");
 		}
 
-		if ((file = open(name,O_RDONLY | O_TEXT)) == -1)
+		if ((file = __open(name,O_RDONLY | O_TEXT)) == -1)
 			USL_HandleError(errno);
 		else
 		{

@@ -224,14 +224,14 @@ static bool GetString(const std::string& filename,
 	// Check for UTF-8 encoded file and skip the UTF-8 mark if it is
 	unsigned char utf8mark[3] = {0,0,0};
     if(fread(utf8mark, sizeof(utf8mark), 1, configFile) == 0) {
-        fclose(configFile);
+        __fclose(configFile);
 		return false;
 	}
 	if (utf8mark[0] != 0xEF || utf8mark[1] != 0xBB || utf8mark[2] != 0xBF)
-        fseek(configFile, 0, SEEK_SET); // Not a UTF-8 file, jump back to the beginning
+        __fseek(configFile, 0, SEEK_SET); // Not a UTF-8 file, jump back to the beginning
 	
 	
-    while(!feof(configFile) && !ferror(configFile))
+    while(! __feof(configFile) && !ferror(configFile))
 	{
 		// Parse the lines
         Line = ReadUntil(configFile, '\n');
@@ -277,7 +277,7 @@ static bool GetString(const std::string& filename,
 		}
 	}
 	
-    fclose(configFile);
+    __fclose(configFile);
 	
 	return found;
 }

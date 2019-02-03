@@ -286,7 +286,7 @@ bool CGameLauncher::scanSubDirectories(const std::string& path,
                                        const size_t endPermil)
 {
     bool gamesDetected = false;
-
+printf("Scanning Subdirectory: %s\n", path.c_str());
 	std::set<std::string> dirs;
 	FileListAdder fileListAdder;
     GetFileList(dirs, fileListAdder,
@@ -356,8 +356,7 @@ bool CGameLauncher::scanExecutables(const std::string& path)
     bool result = false;
 
     gLogging.ftextOut("Search: %s<br>", path.c_str() );
-printf("Lock Attempt\n");
-SDL_LockDisplay();   
+  
     // Episode 1-6 and 7 stands for Keen Dreams
     for(int i = 1; i <= 7; ++i)
     {
@@ -419,7 +418,7 @@ SDL_LockDisplay();
 		}
 		result = true;
 	}
-SDL_UnlockDisplay();
+
     return result;
 }
 

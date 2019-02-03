@@ -27,8 +27,8 @@
 
 unsigned int fgeti(FILE *fp) {
 	unsigned int lsb, msb;
-	lsb = fgetc(fp);
-	msb = fgetc(fp);
+	lsb = __fgetc(fp);
+	msb = __fgetc(fp);
 	return (msb<<8) | lsb;
 }
 
@@ -40,10 +40,10 @@ void fputi(unsigned int word, FILE *fp)
 
 unsigned long fgetl(FILE *fp) {
 	unsigned int temp1, temp2, temp3, temp4;
-	temp1 = fgetc(fp);
-	temp2 = fgetc(fp);
-	temp3 = fgetc(fp);
-	temp4 = fgetc(fp);
+	temp1 = __fgetc(fp);
+	temp2 = __fgetc(fp);
+	temp3 = __fgetc(fp);
+	temp4 = __fgetc(fp);
 	return (temp4<<24) | (temp3<<16) | (temp2<<8) | temp1;
 }
 

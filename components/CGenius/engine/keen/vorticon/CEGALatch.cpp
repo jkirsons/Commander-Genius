@@ -156,10 +156,10 @@ bool CEGALatch::loadData( const std::string &path,
     else
     {
     	for(int i=0 ; i<(m_latchplanesize*4) ; i++)
-    		RawData[i] = fgetc(latchfile);
+    		RawData[i] = __fgetc(latchfile);
     }
 
-    fclose(latchfile);
+    __fclose(latchfile);
 
 	// these are the offsets of the different video planes as
 	// relative to each other--that is if a pixel in plane1

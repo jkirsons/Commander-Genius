@@ -606,7 +606,7 @@ static int check_hash(const char *filename,
   flags |= O_BINARY;
 #endif
 
-  fd = open(filename, flags);
+  fd = __open(filename, flags);
   if(fd == -1) {
     fprintf(error, "Metalink: validating (%s) [%s] FAILED (%s)\n", filename,
             digest_def->hash_name, strerror(errno));
@@ -617,19 +617,19 @@ static int check_hash(const char *filename,
   if(!dctx) {
     fprintf(error, "Metalink: validating (%s) [%s] FAILED (%s)\n", filename,
             digest_def->hash_name, "failed to initialize hash algorithm");
-    close(fd);
+    __close(fd);
     return -2;
   }
 
   result = malloc(digest_def->dparams->digest_resultlen);
   if(!result) {
-    close(fd);
+    __close(fd);
     Curl_digest_final(dctx, NULL);
     return -1;
   }
   while(1) {
     unsigned char buf[4096];
-    ssize_t len = read(fd, buf, sizeof(buf));
+    ssize_t len = __read(fd, buf, sizeof(buf));
     if(len == 0) {
       break;
     }
@@ -637,7 +637,7 @@ static int check_hash(const char *filename,
       fprintf(error, "Metalink: validating (%s) [%s] FAILED (%s)\n", filename,
               digest_def->hash_name, strerror(errno));
       Curl_digest_final(dctx, result);
-      close(fd);
+      __close(fd);
       return -1;
     }
     Curl_digest_update(dctx, buf, (unsigned int)len);
@@ -654,7 +654,7 @@ static int check_hash(const char *filename,
             filename, digest_def->hash_name);
 
   free(result);
-  close(fd);
+  __close(fd);
   return check_ok;
 }
 

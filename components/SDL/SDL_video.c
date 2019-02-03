@@ -237,7 +237,7 @@ void SDL_LockDisplay()
 			abort();
 		}
     }
-    printf("Lock \n");   
+    //printf("Lock \n");   
     //taskYIELD(); 
 }
 
@@ -248,7 +248,7 @@ void SDL_UnlockDisplay()
     if (!xSemaphoreGive(display_mutex))
         abort();
 
-    printf("Unlock\n");
+    //printf("Unlock\n");
     //taskYIELD();
 }
 

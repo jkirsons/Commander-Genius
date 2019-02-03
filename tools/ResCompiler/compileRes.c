@@ -11,14 +11,14 @@ void compileBinIntoCharArray(const char *filename,
                              const char *output)
 {
 
-    FILE *file = fopen(filename, "rb");
-    FILE *out = fopen(output, "w");
+    FILE *file = __fopen(filename, "rb");
+    FILE *out = __fopen(output, "w");
 
     unsigned char buf[16];
     fprintf(out, "#pragma once \n\n static unsigned char %s[] = { ", globVar);
     while(!feof(file))
     {
-            size_t count = fread(buf, 1, 16, file);
+            size_t count = __fread(buf, 1, 16, file);
 
             for(int n = 0; n < count; ++n)
             {
@@ -28,8 +28,8 @@ void compileBinIntoCharArray(const char *filename,
             fprintf(out, "\n");
     }
     fprintf(out, "};");
-    fclose(file);
-    fclose(out);
+    __fclose(file);
+    __fclose(out);
 }
 
 int main()

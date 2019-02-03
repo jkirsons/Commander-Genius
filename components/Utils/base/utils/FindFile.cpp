@@ -133,7 +133,7 @@ bool IsFileAvailable(const std::string& f, bool absolute)
 
 	// HINT: this should also work on WIN32, as we have _stat here
 	struct stat s;
-	if(stat(abs_f.c_str(), &s) != 0 || !S_ISREG(s.st_mode)) {
+	if(__stat(abs_f.c_str(), &s) != 0 || !S_ISREG(s.st_mode)) {
 		// it's not stat-able or not a reg file
 		return false;
 	}
@@ -243,7 +243,7 @@ bool IsPathStatable(const std::string& f)
 #ifdef WIN32  // uses UTF16
 	return (wstat(Utf8ToUtf16(abs_f).c_str(), &s) == 0); // ...==0, if successfull
 #else // other systems
-	return (stat(abs_f.c_str(), &s) == 0); // ...==0, if successfull
+	return (__stat(abs_f.c_str(), &s) == 0); // ...==0, if successfull
 #endif
 }
 
@@ -340,11 +340,11 @@ bool CaseInsFindFile(const std::string& dir, const std::string& searchname, std:
 		return true;
 	}
 
-	DIR* dirhandle = opendir((dir == "") ? "." : dir.c_str());
+	DIR* dirhandle = __opendir((dir == "") ? "." : dir.c_str());
     if(dirhandle == nullptr) return false;
 
 	dirent* direntry;
-	while((direntry = readdir(dirhandle))) {
+	while((direntry = __readdir(dirhandle))) {
 		if(strcasecmp(direntry->d_name, searchname.c_str()) == 0) {
 			filename = direntry->d_name;
 			closedir(dirhandle);
@@ -527,14 +527,14 @@ std::string GetFirstSearchPath()
 
 size_t FileSize(const std::string& path)
 {
-	FILE *fp = fopen(path.c_str(), "rb");
+	FILE *fp = __fopen(path.c_str(), "rb");
 	if (!fp)  {
 		fp = OpenGameFile(path, "rb");
 		if (!fp)
 			return 0;
 	}
 	fseek(fp, 0, SEEK_END);
-	size_t size = ftell(fp);
+	size_t size = __ftell(fp);
 	fclose(fp);
 	return size;
 }
@@ -650,7 +650,7 @@ FILE* OpenAbsFile(const std::string& path, const char *mode) {
 	std::string exactfn;
 	if(!GetExactFileName(path, exactfn))
 		return NULL;
-	return fopen(exactfn.c_str(), mode);
+	return __fopen(exactfn.c_str(), mode);
 }
 
 FILE *OpenGameFile(const std::string& path, const char *mode) {
@@ -677,11 +677,11 @@ FILE *OpenGameFile(const std::string& path, const char *mode) {
 			}
 		}
 		//errors << "opening file for writing (mode %s): %s\n", mode, writefullname);
-		return fopen(Utf8ToSystemNative(writefullname).c_str(), mode);
+		return __fopen(Utf8ToSystemNative(writefullname).c_str(), mode);
 	}
 
 	if(fullfn.size() != 0) {
-		return fopen(Utf8ToSystemNative(fullfn).c_str(), mode);
+		return __fopen(Utf8ToSystemNative(fullfn).c_str(), mode);
 	}
 
 	return NULL;
@@ -702,7 +702,9 @@ bool OpenGameFileR(std::ifstream& f,
     {
         try
         {
+			SDL_LockDisplay();
 			f.open(Utf8ToSystemNative(fullfn).c_str(), mode);
+			SDL_UnlockDisplay();
 			return f.is_open();
         }
         catch(...) {}
@@ -725,7 +727,9 @@ std::ofstream && OpenGameFileW(const std::string& path, const std::ios_base::ope
     {
         try
         {
+			SDL_LockDisplay();
             f.open(Utf8ToSystemNative(fullfn).c_str(), mode);
+			SDL_UnlockDisplay();
             return std::move(f);
         }
         catch(...) {}
@@ -743,7 +747,9 @@ bool OpenGameFileW(std::ofstream& f, const std::string& path, std::ios_base::ope
 	std::string fullfn = GetWriteFullFileName(path, true);
 	if(fullfn.size() != 0) {
 		try {
+			SDL_LockDisplay();
 			f.open(Utf8ToSystemNative(fullfn).c_str(), mode);
+			SDL_UnlockDisplay();
 			return f.is_open();
 		} catch(...) {}
 		return false;
@@ -798,7 +804,7 @@ std::string GetHomeDir()
 //		if(userinfo)
 //			return userinfo->pw_dir;
 //		return ""; // both failed, very strange system...
-		return "/sd/data/keen/";
+		return "/sd/data/Commander Keen";
 	}
 	return home;
 #else
@@ -877,14 +883,14 @@ bool FileCopy(const std::string& src, const std::string& dest) {
 
 	notes << "FileCopy: " << src << " -> " << dest << endl;
 
-	FILE* src_f = fopen(Utf8ToSystemNative(src).c_str(), "rb");
+	FILE* src_f = __fopen(Utf8ToSystemNative(src).c_str(), "rb");
 
 	if(!src_f) {
 		errors << "FileCopy: cannot open source" << endl;
 		return false;
 	}
 
-	FILE* dest_f = fopen(Utf8ToSystemNative(dest).c_str(), "wb");
+	FILE* dest_f = __fopen(Utf8ToSystemNative(dest).c_str(), "wb");
 
 	if(!dest_f) {
 		fclose(src_f);
@@ -896,13 +902,13 @@ bool FileCopy(const std::string& src, const std::string& dest) {
 	unsigned short count = 0;
 	notes << "FileCopy: |" << flush;
 	size_t len = 0;
-    while((len = fread(tmp, 1, sizeof(tmp), src_f)) > 0)
+    while((len = __fread(tmp, 1, sizeof(tmp), src_f)) > 0)
     {
         if(count == 0)
         {
             notes << "." << flush; count++; count %= 20;
         }
-        if(len != fwrite(tmp, 1, len, dest_f))
+        if(len != __fwrite(tmp, 1, len, dest_f))
         {
 			errors << "FileCopy: problem while writing" << endl;
 			success = false;
@@ -912,7 +918,7 @@ bool FileCopy(const std::string& src, const std::string& dest) {
 	}
 	notes << endl;
 	if(success) {
-		success = feof(src_f) != 0;
+		success = __feof(src_f) != 0;
 		if(!success) errors << "FileCopy: problem while reading" << endl;
 	}
 
@@ -926,7 +932,7 @@ bool CanWriteToDir(const std::string& dir) {
 	// TODO: we have to make this a lot better!
 	std::string fname = dir + "/.some_stupid_temp_file";
 
-	FILE* fp = fopen(Utf8ToSystemNative(fname).c_str(), "w");
+	FILE* fp = __fopen(Utf8ToSystemNative(fname).c_str(), "w");
 
 	if(fp) {
 		fclose(fp);
@@ -986,7 +992,7 @@ std::string GetFileContents(const std::string& path, bool absolute)
 {
 	FILE *fp = NULL;
 	if (absolute)
-		fp = fopen(/*Utf8ToSystemNative(path)*/path.c_str(), "rb");
+		fp = __fopen(/*Utf8ToSystemNative(path)*/path.c_str(), "rb");
 	else
 		fp = OpenGameFile(path, "rb");
 
@@ -994,7 +1000,7 @@ std::string GetFileContents(const std::string& path, bool absolute)
 		return "";
 
 	fseek(fp, 0, SEEK_END);
-	size_t size = ftell(fp);
+	size_t size = __ftell(fp);
 	fseek(fp, 0, SEEK_SET);
 
 	if (!size)  {
@@ -1003,7 +1009,7 @@ std::string GetFileContents(const std::string& path, bool absolute)
 	}
 
 	char *buf = new char[size];
-	size = fread(buf, 1, size, fp);
+	size = __fread(buf, 1, size, fp);
 	if (!size)  {
 		delete[] buf;
 		fclose(fp);
@@ -1099,7 +1105,7 @@ std::string JoinPaths(const std::string& path1, const std::string& path2)
 #ifdef WIN32
 /*static int stdio_seek(SDL_RWops *context, int offset, int whence)
 {
-	if ( fseek(context->hidden.stdio.fp, offset, whence) == 0 ) {
+	if ( __fseek(context->hidden.stdio.fp, offset, whence) == 0 ) {
 		return(ftell(context->hidden.stdio.fp));
 	} else {
 		SDL_Error(SDL_EFSEEK);
@@ -1110,7 +1116,7 @@ static int stdio_read(SDL_RWops *context, void *ptr, int size, int maxnum)
 {
 	size_t nread;
 
-	nread = fread(ptr, size, maxnum, context->hidden.stdio.fp);
+	nread = __fread(ptr, size, maxnum, context->hidden.stdio.fp);
 	if ( nread == 0 && ferror(context->hidden.stdio.fp) ) {
 		SDL_Error(SDL_EFREAD);
 	}
@@ -1120,7 +1126,7 @@ static int stdio_write(SDL_RWops *context, const void *ptr, int size, int num)
 {
 	size_t nwrote;
 
-	nwrote = fwrite(ptr, size, num, context->hidden.stdio.fp);
+	nwrote = __fwrite(ptr, size, num, context->hidden.stdio.fp);
 	if ( nwrote == 0 && ferror(context->hidden.stdio.fp) ) {
 		SDL_Error(SDL_EFWRITE);
 	}

@@ -108,10 +108,10 @@ bool CEGASprit::loadData(const std::string& filename, bool compresseddata)
     else
     {
     	for(int i=0 ; i<(m_planesize*5) ; i++)
-    		RawData[i] = fgetc(latchfile);
+    		RawData[i] = __fgetc(latchfile);
     }
 	
-    fclose(latchfile);
+    __fclose(latchfile);
 
     mLoader.setPermilage(50);
 	

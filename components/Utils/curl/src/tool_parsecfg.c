@@ -67,9 +67,9 @@ int parseconfig(const char *filename, struct GlobalConfig *global)
         /* Check if the file exists - if not, try CURLRC in the same
          * directory as our executable
          */
-        file = fopen(filebuffer, FOPEN_READTEXT);
+        file = __fopen(filebuffer, FOPEN_READTEXT);
         if(file != NULL) {
-          fclose(file);
+          __fclose(file);
           filename = filebuffer;
         }
         else {
@@ -111,7 +111,7 @@ int parseconfig(const char *filename, struct GlobalConfig *global)
   }
 
   if(strcmp(filename, "-"))
-    file = fopen(filename, FOPEN_READTEXT);
+    file = __fopen(filename, FOPEN_READTEXT);
   else
     file = stdin;
 
@@ -267,7 +267,7 @@ int parseconfig(const char *filename, struct GlobalConfig *global)
       Curl_safefree(aline);
     }
     if(file != stdin)
-      fclose(file);
+      __fclose(file);
   }
   else
     rc = 1; /* couldn't open the file */

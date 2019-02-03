@@ -40,7 +40,7 @@ bool CIMFPlayer::loadMusicFromFile(const std::string& filename)
         return false;
     }
     
-    int read_first = fread( &data_size, sizeof(word), 1, fp);
+    int read_first = __fread( &data_size, sizeof(word), 1, fp);
     
     if( read_first == 0)
     {
@@ -49,9 +49,9 @@ bool CIMFPlayer::loadMusicFromFile(const std::string& filename)
 
     if (data_size == 0) // Is the IMF file of Type-0?
     {
-        fseek(fp, 0, SEEK_END);
-        data_size = ftell(fp);
-        fseek(fp, 0, SEEK_SET);
+        __fseek(fp, 0, SEEK_END);
+        data_size = __ftell(fp);
+        __fseek(fp, 0, SEEK_SET);
     }
     
     if(!m_IMF_Data.empty())
@@ -60,7 +60,7 @@ bool CIMFPlayer::loadMusicFromFile(const std::string& filename)
     const word imf_chunks = (data_size/sizeof(IMFChunkType));
     m_IMF_Data.resize(imf_chunks);
     
-    if( imf_chunks != fread( m_IMF_Data.getStartPtr(), sizeof(IMFChunkType), imf_chunks, fp ) )
+    if( imf_chunks != __fread( m_IMF_Data.getStartPtr(), sizeof(IMFChunkType), imf_chunks, fp ) )
     {
         gLogging.textOut("The IMF-File seems to be corrupt.");
     }
@@ -69,7 +69,7 @@ bool CIMFPlayer::loadMusicFromFile(const std::string& filename)
         ok = true;
     }
     
-    fclose(fp);
+    __fclose(fp);
     
     return ok;
 }

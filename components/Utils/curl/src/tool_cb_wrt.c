@@ -44,9 +44,9 @@ bool tool_create_output_file(struct OutStruct *outs)
 
   if(outs->is_cd_filename) {
     /* don't overwrite existing files */
-    file = fopen(outs->filename, "rb");
+    file = __fopen(outs->filename, "rb");
     if(file) {
-      fclose(file);
+      __fclose(file);
       warnf(global, "Refusing to overwrite %s: %s\n", outs->filename,
             strerror(EEXIST));
       return FALSE;
@@ -54,7 +54,7 @@ bool tool_create_output_file(struct OutStruct *outs)
   }
 
   /* open file for writing */
-  file = fopen(outs->filename, "wb");
+  file = __fopen(outs->filename, "wb");
   if(!file) {
     warnf(global, "Failed to create the file %s: %s\n", outs->filename,
           strerror(errno));
@@ -191,7 +191,7 @@ size_t tool_write_cb(char *buffer, size_t sz, size_t nmemb, void *userdata)
   }
   else
 #endif
-    rc = fwrite(buffer, sz, nmemb, outs->stream);
+    rc = __fwrite(buffer, sz, nmemb, outs->stream);
 
   if(bytes == rc)
     /* we added this amount of data to the output */

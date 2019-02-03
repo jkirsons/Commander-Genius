@@ -840,7 +840,7 @@ void CA_Startup (void)
 {
 #ifdef PROFILE
 	unlink ("PROFILE.TXT");
-	profilehandle = open("PROFILE.TXT", O_CREAT | O_WRONLY | O_TEXT);
+	profilehandle = __open("PROFILE.TXT", O_CREAT | O_WRONLY | O_TEXT);
 #endif
 
 	CAL_SetupMapFile ();

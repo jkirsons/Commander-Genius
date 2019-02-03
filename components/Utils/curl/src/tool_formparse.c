@@ -277,14 +277,14 @@ static int get_param_part(struct OperationConfig *config, char endchar,
         sep = *p;
         *endpos = '\0';
         /* TODO: maybe special fopen for VMS? */
-        fp = fopen(hdrfile, FOPEN_READTEXT);
+        fp = __fopen(hdrfile, FOPEN_READTEXT);
         if(!fp)
           warnf(config->global, "Cannot read from %s: %s\n", hdrfile,
                 strerror(errno));
         else {
           int i = read_field_headers(config, hdrfile, fp, &headers);
 
-          fclose(fp);
+          __fclose(fp);
           if(i) {
             curl_slist_free_all(headers);
             return -1;
@@ -397,7 +397,7 @@ static size_t stdin_read(char *buffer, size_t size, size_t nitems, void *arg)
   }
   else {
     /* Read from stdin. */
-    nitems = fread(buffer, 1, nitems, stdin);
+    nitems = __fread(buffer, 1, nitems, stdin);
   }
   sip->curpos += nitems;
   return nitems;
@@ -458,7 +458,7 @@ static CURLcode file_or_stdin(curl_mimepart *part, const char *file)
 
   /* If stdin is a regular file, do not buffer data but read it when needed. */
   fd = fileno(stdin);
-  sip->origin = ftell(stdin);
+  sip->origin = __ftell(stdin);
   if(fd >= 0 && sip->origin >= 0 && !fstat(fd, &sbuf) &&
 #ifdef __VMS
      sbuf.st_fab_rfm != FAB$C_VAR && sbuf.st_fab_rfm != FAB$C_VFC &&

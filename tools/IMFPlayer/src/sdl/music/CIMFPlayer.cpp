@@ -38,15 +38,15 @@ m_mix_buffer(new Sint32[m_samplesPerMusicTick])
 	word data_size;
 	int read_first;
 
-	if( ( fp = fopen(filename.c_str(), "rb") ) == NULL )
+	if( ( fp = __fopen(filename.c_str(), "rb") ) == NULL )
     	return;
 
-	read_first = fread( &data_size, sizeof(word), 1, fp);
+	read_first = __fread( &data_size, sizeof(word), 1, fp);
     if (data_size == 0) // Is the IMF file of Type-0?
     {
-        fseek(fp, 0, SEEK_END);
-        data_size = ftell(fp);
-        fseek(fp, 0, SEEK_SET);
+        __fseek(fp, 0, SEEK_END);
+        data_size = __ftell(fp);
+        __fseek(fp, 0, SEEK_SET);
     }
 
 
@@ -55,7 +55,7 @@ m_mix_buffer(new Sint32[m_samplesPerMusicTick])
     const word imf_chunks = data_size/sizeof(IMFChunkType);
     m_IMF_Data.reserve(imf_chunks);
 
-    if( imf_chunks != fread( m_IMF_Data.getStartPtr(), sizeof(IMFChunkType), imf_chunks, fp ) )
+    if( imf_chunks != __fread( m_IMF_Data.getStartPtr(), sizeof(IMFChunkType), imf_chunks, fp ) )
     {
 /*    	g_pLogFile->textOut("The IMF-File seems to be corrupt.");
     	//g_pLogFile << filename;*/

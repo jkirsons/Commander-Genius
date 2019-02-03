@@ -178,7 +178,7 @@ void dumpeasysrc(struct GlobalConfig *config)
   FILE *out;
   bool fopened = FALSE;
   if(strcmp(o, "-")) {
-    out = fopen(o, FOPEN_WRITETEXT);
+    out = __fopen(o, FOPEN_WRITETEXT);
     fopened = TRUE;
   }
   else
@@ -227,7 +227,7 @@ void dumpeasysrc(struct GlobalConfig *config)
       fprintf(out, "%s\n", c);
 
     if(fopened)
-      fclose(out);
+      __fclose(out);
   }
 
   easysrc_free();

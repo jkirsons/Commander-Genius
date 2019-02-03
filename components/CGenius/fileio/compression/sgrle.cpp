@@ -31,11 +31,11 @@ unsigned char sgrle_get_next_byte(FILE *fp, unsigned char marker)
 	}
 	else
 	{	// not currently in a RLE run
-		sgrle_runchar = fgetc(fp);
+		sgrle_runchar = __fgetc(fp);
 		if (sgrle_runchar==marker)
 		{  // start of a RLE run
 			sgrle_runlen = fgeti(fp);
-			sgrle_runchar = fgetc(fp);
+			sgrle_runchar = __fgetc(fp);
 			return sgrle_get_next_byte(fp, marker);
 		}
 		else return sgrle_runchar;
@@ -131,7 +131,7 @@ void sgrle_compress(FILE *fp, unsigned char *ptr, unsigned long nbytes)
 			if (runlength < 4 && readbyt != SGRLE_RLEMARKERNEW)
 			{
 				// RLE run, but too small to bother with
-				for(i=0;i<runlength;i++) fputc(readbyt, fp);
+				for(i=0;i<runlength;i++) __fputc(readbyt, fp);
 			}
 			else
 			{

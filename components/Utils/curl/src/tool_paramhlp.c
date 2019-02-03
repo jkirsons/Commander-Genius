@@ -112,7 +112,7 @@ ParameterError file2memory(char **bufp, size_t *size, FILE *file)
         }
         buffer = newbuf;
       }
-      nread = fread(buffer + nused, 1, alloc-nused, file);
+      nread = __fread(buffer + nused, 1, alloc-nused, file);
       nused += nread;
     } while(nread);
     /* null terminate the buffer in case it's used as a string later */

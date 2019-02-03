@@ -85,7 +85,7 @@ static int older_progress(void *p,
 
 size_t write_data(void *ptr, size_t size, size_t nmemb, FILE *stream)
 {
-    size_t written = fwrite(ptr, size, nmemb, stream);
+    size_t written = __fwrite(ptr, size, nmemb, stream);
     return written;
 }
 
@@ -171,7 +171,7 @@ int downloadFile(const std::string &filename, int &progress,
       /* always cleanup */
       curl_easy_cleanup(curl);
 
-      fclose(fp);
+      __fclose(fp);
 
       // If all went well, the temp file will become the real one
       if(res == CURLE_OK)

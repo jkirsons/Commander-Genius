@@ -19,7 +19,7 @@
 extern "C"
 {
 
-
+#include "SDL.h"
 #include <stdio.h>
 //#include <dos.h>
 //#include <mem.h>
@@ -164,7 +164,7 @@ static id0_int_t ReadPtr(void **infile, id0_unsigned_t PtrType)
 		break;
 
 		case SRC_FFILE:
-			returnval = fgetc((FILE id0_far *)*(FILE id0_far **)infile);
+			returnval = __fgetc((FILE id0_far *)*(FILE id0_far **)infile);
 		break;
 
 

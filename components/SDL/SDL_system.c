@@ -5,6 +5,8 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <dirent.h>
+
 void Check(const char *str)
 {
 #if 0	
@@ -259,3 +261,29 @@ int __unlink(const char *pathname)
 	SDL_UnlockDisplay();
 	return ret;		
 }
+
+DIR *__opendir(const char *name)
+{
+	SDL_LockDisplay();
+	DIR *ret = opendir(name);
+	SDL_UnlockDisplay();
+	return ret;		
+}
+
+struct dirent *__readdir(DIR *dirp)
+{
+	SDL_LockDisplay();
+	struct dirent *ret = readdir(dirp);
+	SDL_UnlockDisplay();
+	return ret;		
+}
+
+/*
+DIR *__fdopendir(int fd)
+{
+	SDL_LockDisplay();
+	DIR *ret = fdopendir(fd);
+	SDL_UnlockDisplay();
+	return ret;		
+}
+*/

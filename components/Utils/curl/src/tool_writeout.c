@@ -120,7 +120,7 @@ void ourWriteOut(CURL *curl, struct OutStruct *outs, const char *writeinfo)
     if('%' == *ptr && ptr[1]) {
       if('%' == ptr[1]) {
         /* an escaped %-letter */
-        fputc('%', stream);
+        __fputc('%', stream);
         ptr += 2;
       }
       else {
@@ -345,8 +345,8 @@ void ourWriteOut(CURL *curl, struct OutStruct *outs, const char *writeinfo)
         }
         else {
           /* illegal syntax, then just output the characters that are used */
-          fputc('%', stream);
-          fputc(ptr[1], stream);
+          __fputc('%', stream);
+          __fputc(ptr[1], stream);
           ptr += 2;
         }
       }
@@ -354,24 +354,24 @@ void ourWriteOut(CURL *curl, struct OutStruct *outs, const char *writeinfo)
     else if('\\' == *ptr && ptr[1]) {
       switch(ptr[1]) {
       case 'r':
-        fputc('\r', stream);
+        __fputc('\r', stream);
         break;
       case 'n':
-        fputc('\n', stream);
+        __fputc('\n', stream);
         break;
       case 't':
-        fputc('\t', stream);
+        __fputc('\t', stream);
         break;
       default:
         /* unknown, just output this */
-        fputc(*ptr, stream);
-        fputc(ptr[1], stream);
+        __fputc(*ptr, stream);
+        __fputc(ptr[1], stream);
         break;
       }
       ptr += 2;
     }
     else {
-      fputc(*ptr, stream);
+      __fputc(*ptr, stream);
       ptr++;
     }
   }

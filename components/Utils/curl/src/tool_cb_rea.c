@@ -39,7 +39,7 @@ size_t tool_read_cb(void *buffer, size_t sz, size_t nmemb, void *userdata)
   ssize_t rc;
   struct InStruct *in = userdata;
 
-  rc = read(in->fd, buffer, sz*nmemb);
+  rc = __read(in->fd, buffer, sz*nmemb);
   if(rc < 0) {
     if(errno == EAGAIN) {
       errno = 0;

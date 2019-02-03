@@ -102,7 +102,7 @@ LONG WINAPI CustomUnhandledExceptionFilter(PEXCEPTION_POINTERS pExInfo)
 		strncat(checkname, "report", sizeof(checkname));
 		strncat(checkname, tmp, sizeof(checkname));
 		strncat(checkname, ".dmp", sizeof(checkname));
-		f = fopen(checkname, "rb");
+		f = __fopen(checkname, "rb");
 		if (!f)
 			break;
 		fclose(f);

@@ -29,7 +29,7 @@
 
 #if defined(__APPLE__) || defined(IOAPI_NO_64)
 // In darwin and perhaps other BSD variants off_t is a 64 bit value, hence no need for specific 64 bit functions
-#define FOPEN_FUNC(filename, mode) fopen(filename, mode)
+#define FOPEN_FUNC(filename, mode) __fopen(filename, mode)
 #define FTELLO_FUNC(stream) ftello(stream)
 #define FSEEKO_FUNC(stream, offset, origin) fseeko(stream, offset, origin)
 #else
@@ -132,11 +132,11 @@ int createDir(dirname)
 #endif
 
 #if defined(__linux__) || __linux__
-    ret = mkdir (dirname,0775);
+    ret = __mkdir (dirname,0775);
 #endif
 
 #if defined(__APPLE__)
-    ret = mkdir (dirname,0775);
+    ret = __mkdir (dirname,0775);
 #endif
     return ret;
 }
@@ -386,7 +386,7 @@ int do_extract_currentfile(uf,popt_extract_without_path,popt_overwrite,password)
             ftestexist = FOPEN_FUNC(write_filename,"rb");
             if (ftestexist!=NULL)
             {
-                fclose(ftestexist);
+                __fclose(ftestexist);
                 do
                 {
                     char answer[128];
@@ -454,7 +454,7 @@ int do_extract_currentfile(uf,popt_extract_without_path,popt_overwrite,password)
             }
             while (err>0);
             if (fout)
-                    fclose(fout);
+                    __fclose(fout);
 
             if (err==0)
                 change_file_date(write_filename,file_info.dosDate,

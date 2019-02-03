@@ -12,6 +12,7 @@
 
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <dirent.h>
 
 typedef struct {
     Uint8 major;
@@ -74,4 +75,45 @@ ssize_t __read(int fildes, void *buf, size_t nbyte);
 ssize_t __write(int fildes, const void *buf, size_t nbyte);
 off_t __lseek(int fd, off_t offset, int whence);
 int __unlink(const char *pathname); 
+DIR *__opendir(const char *name);
+struct dirent *__readdir(DIR *dirp);
+
+/*
+#undef mkdir
+#undef fopen
+#undef ftell
+#undef feof
+#undef fputc
+#undef fgetc
+#undef fwrite
+#undef fclose
+#undef fseek
+#undef fread
+#undef stat
+#undef open
+#undef close
+#undef read
+#undef write
+#undef lseek
+#undef unlink
+
+#define mkdir __mkdir
+#define fopen __fopen
+#define ftell __ftell
+#define feof __feof
+#define fputc __fputc
+#define fgetc __fgetc
+#define fwrite __fwrite
+#define fclose __fclose
+#define fseek __fseek
+#define fread __fread
+#define stat __stat
+#define open __open
+#define close __close
+#define read __read
+#define write __write
+#define lseek __lseek
+#define unlink __unlink
+*/
+
 #endif

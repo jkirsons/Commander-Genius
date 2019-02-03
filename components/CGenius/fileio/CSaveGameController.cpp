@@ -162,7 +162,7 @@ bool CSaveGameController::IsOldSGVersion5(const std::string& fname)
 
 	for(size_t i=0; i < strlen(verify); i++)
 	{
-		char c = fgetc(fp);
+		char c = __fgetc(fp);
 		if (c != verify[i])
 		{
 			fclose(fp);
@@ -184,8 +184,8 @@ bool CSaveGameController::IsOldSGVersion4(const std::string& fname)
 	FILE* fp = OpenGameFile(fname, "rb");
 	if (!fp) return false;
 
-	if (fgetc(fp) != 'S') { fclose(fp); return false; }
-	if (fgetc(fp) != OLDSAVEGAMEVERSION4) { fclose(fp); return false; }
+	if (fgetc(fp) != 'S') { __fclose(fp); return false; }
+	if (fgetc(fp) != OLDSAVEGAMEVERSION4) { __fclose(fp); return false; }
 
 	fclose(fp);
 	return true;
@@ -286,8 +286,8 @@ bool CSaveGameController::loadSaveGameVersion4(const std::string &fname, OldSave
 	if (!fp) { gLogging.ftextOut("unable to open %s\n",fname.c_str()); return false; }
 
 	gLogging.ftextOut("game_load: restoring structures...\n");
-	if (fgetc(fp) != 'S') { fclose(fp); return false; }
-	if (fgetc(fp) != OLDSAVEGAMEVERSION4) { fclose(fp); return false; }
+	if (fgetc(fp) != 'S') { __fclose(fp); return false; }
+	if (fgetc(fp) != OLDSAVEGAMEVERSION4) { __fclose(fp); return false; }
 	fgetc(fp);
 
 	// load all structures from the file
@@ -486,10 +486,10 @@ bool CSaveGameController::convertOldFormat(size_t slot)
 void CSaveGameController::readOldHeader(FILE *fp, byte *episode, byte *level, byte *lives, byte *num_players)
 {
 	fseek(fp, SG_HEADERSIZE, SEEK_SET);		// skip past the CKSAVE%c
-	*episode = fgetc(fp);
-	*level = fgetc(fp);
-	*lives = fgetc(fp);
-	*num_players = fgetc(fp);
+	*episode = __fgetc(fp);
+	*level = __fgetc(fp);
+	*lives = __fgetc(fp);
+	*num_players = __fgetc(fp);
 }
 
 /* --- Functions for older savegames END --- */

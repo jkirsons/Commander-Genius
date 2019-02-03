@@ -600,7 +600,7 @@ void freadstr(std::string& result, size_t maxlen, FILE *fp) {
 	
 	for(size_t len = 0; len < maxlen; len += sizeof(buf)) {
 		c = MIN(sizeof(buf), maxlen - len);
-		ret = fread(buf, 1, c, fp);
+		ret = __fread(buf, 1, c, fp);
 		if(ret > 0)
 			result.append(buf, ret);
 		if(ret < c)
@@ -611,7 +611,7 @@ void freadstr(std::string& result, size_t maxlen, FILE *fp) {
 
 size_t fwrite(const std::string& txt, size_t len, FILE* fp) {
 	size_t len_of_txt = MIN(txt.size()+1, len-1);
-	size_t ret = fwrite(txt.c_str(), 1, len_of_txt, fp);
+	size_t ret = __fwrite(txt.c_str(), 1, len_of_txt, fp);
 	if(ret != len_of_txt)
 		return ret;
 	for(; len_of_txt < len; len_of_txt++)
