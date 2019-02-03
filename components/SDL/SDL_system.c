@@ -278,6 +278,14 @@ struct dirent *__readdir(DIR *dirp)
 	return ret;		
 }
 
+int __closedir(DIR *dirp)
+{
+	SDL_LockDisplay();
+	int ret = closedir(dirp);
+	SDL_UnlockDisplay();
+	return ret;	
+}
+
 /*
 DIR *__fdopendir(int fd)
 {

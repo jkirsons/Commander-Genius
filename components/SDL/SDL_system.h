@@ -77,6 +77,7 @@ off_t __lseek(int fd, off_t offset, int whence);
 int __unlink(const char *pathname); 
 DIR *__opendir(const char *name);
 struct dirent *__readdir(DIR *dirp);
+int __closedir(DIR *dirp);
 
 /*
 #undef mkdir

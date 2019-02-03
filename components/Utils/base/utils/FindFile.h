@@ -136,7 +136,7 @@ bool GetExactFileName(const std::string& abs_searchname,
 
 inline bool GetExactFileName(const std::string& abs_searchname, std::string& filename) {
 	filename = abs_searchname;
-
+printf("abs_searchname.size: %d\n", abs_searchname.size());
 	if(abs_searchname.size() == 0) {
 		return true;
 	}
@@ -152,8 +152,8 @@ inline bool GetExactFileName(const std::string& abs_searchname, std::string& fil
 			filename.erase(filename.length()-1);
 
 	struct stat finfo;
-
-	if(stat(Utf8ToSystemNative(filename).c_str(), &finfo) != 0) {
+printf("Native: %s\n", Utf8ToSystemNative(filename).c_str());
+	if(__stat(Utf8ToSystemNative(filename).c_str(), &finfo) != 0) {
 		// problems stating file
 		return false;
 	}
@@ -332,8 +332,9 @@ public:
 	filehandler(filehandler_) {}
 
 	bool operator() (const std::string& path) {
+printf("FindFilesHandler operator(): path:%s dir: %s\n", path.c_str(), dir.c_str());		
 		std::string abs_path = path;
-		if(!GetExactFileName(path + dir, abs_path)) return true;
+		//if(!GetExactFileName(path + dir, abs_path)) return true;
 		bool ret = true;
 
 #ifdef WIN32  // uses UTF16
@@ -361,13 +362,15 @@ public:
 		std::string filename;
 		dirent* entry;
 		struct stat s;
-		DIR* handle = opendir(abs_path.c_str());
+		DIR* handle = __opendir(abs_path.c_str());
+printf("handle: %p\n", handle);		
 		if(!handle) return ret;
-		while((entry = readdir(handle)) != 0) {
+		while((entry = __readdir(handle)) != 0) {
+printf("entry->d_name: %s\n", entry->d_name);			
             //If file is nkaution vom mieterot self-directory or parent-directory
 			if(entry->d_name[0] != '.' || (entry->d_name[1] != '\0' && (entry->d_name[1] != '.' || entry->d_name[2] != '\0'))) {
 				filename = abs_path + "/" + entry->d_name;
-				if(stat(filename.c_str(), &s) == 0)
+				if(__stat(filename.c_str(), &s) == 0)
 					if((S_ISREG(s.st_mode) && modefilter&FM_REG)
 					   || (S_ISDIR(s.st_mode) && modefilter&FM_DIR)
 					   || (S_ISLNK(s.st_mode) && modefilter&FM_LNK))
@@ -377,7 +380,7 @@ public:
 						}
 			}
 		}
-		closedir(handle);
+		__closedir(handle);
 #endif /* WIN32 */
 		return ret;
 	}
@@ -395,6 +398,7 @@ void FindFiles(
 			   const filemodes_t modefilter = -1,
 			   const std::string& namefilter = ""
 			   ) {
+printf("FindFiles %s, %s\n", dir.c_str(), namefilter.c_str());	   
 	if(namefilter != "*" && namefilter != "")
 		warnings << "FindFiles: filter " << namefilter <<" isn't handled yet" << endl;
 	if(absolutePath)
@@ -426,7 +430,7 @@ void GetFileList(
 				 const std::string& namefilter = "")
 {
 	GetFileList_FileListAdder<_List,_CheckFct> adder(checkFct, filelist);
-	FindFiles(adder, dir, absolutePath, modefilter, namefilter);
+	FindFiles(adder, dir, true /*absolutePath*/, modefilter, namefilter);
 }
 
 class Command;
@@ -523,7 +527,7 @@ inline bool StatFile( const std::string & file, struct stat * st )
 	std::string exactfname;
 	if( ! GetExactFileName( fname, exactfname ) )
 		return false;
-	if( stat( Utf8ToSystemNative(fname).c_str(), st ) != 0 )
+	if( __stat( Utf8ToSystemNative(fname).c_str(), st ) != 0 )
 		return false;
 
 	return true;

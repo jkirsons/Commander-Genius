@@ -883,7 +883,7 @@ int BE_Cross_GetSortedRewritableFilenames_AsUpperCase(char *outFilenames, int ma
 				}
 			};
 		}
-		closedir(dir);
+		__closedir(dir);
 	}
 	return (nextFilename-outFilenames)/strLenBound;
 }

@@ -347,7 +347,7 @@ bool CaseInsFindFile(const std::string& dir, const std::string& searchname, std:
 	while((direntry = __readdir(dirhandle))) {
 		if(strcasecmp(direntry->d_name, searchname.c_str()) == 0) {
 			filename = direntry->d_name;
-			closedir(dirhandle);
+			__closedir(dirhandle);
 #ifdef DEBUG
 			// HINT: activate this warning temporarly when you want to fix some filenames
 			//if(filename != searchname)
@@ -358,7 +358,7 @@ bool CaseInsFindFile(const std::string& dir, const std::string& searchname, std:
 		add_searchname_to_exactfilenamecache((dir == "") ? direntry->d_name : (dir + "/" + direntry->d_name));
 	}
 
-	closedir(dirhandle);
+	__closedir(dirhandle);
 	return false;
 }
 
