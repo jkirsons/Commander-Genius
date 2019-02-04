@@ -227,18 +227,16 @@ void SDL_LockDisplay()
         //xSemaphoreGive(display_mutex);
     }
 
-    if (!xSemaphoreTake(display_mutex, 10000 / portTICK_RATE_MS))
-    {
+	while(1)
+	{
+		if (xSemaphoreTake(display_mutex, 10000 / portTICK_RATE_MS) == pdTRUE)
+			break;
 		printf("Timeout waiting for display lock - trying again.\n");
-		vTaskDelay( 100 );
-		if (!xSemaphoreTake(display_mutex, 10000 / portTICK_RATE_MS))
-		{
-			printf("Timeout waiting for display lock.\n");
-			abort();
-		}
-    }
+		vTaskDelay( 100 );	
+		taskYIELD(); 
+	}
+
     //printf("Lock \n");   
-    //taskYIELD(); 
 }
 
 void SDL_UnlockDisplay()

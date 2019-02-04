@@ -23,5 +23,5 @@ void cgTask(void *pvParameters)
 extern "C" void app_main(void)
 //void app_main(void)
 {
-	xTaskCreatePinnedToCore(&cgTask, "cgTask", 12000, NULL, 2, NULL, 0);
+	xTaskCreatePinnedToCore(&cgTask, "cgTask", 32000, NULL, 2, NULL, 0);
 }
