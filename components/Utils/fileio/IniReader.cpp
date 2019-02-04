@@ -41,9 +41,9 @@ bool IniReader::Parse()
 	std::string section;
 	std::string value;
 
-	while(!feof(f) && !ferror(f)) {
+	while(!__feof(f) && !ferror(f)) {
 		unsigned char c = 0;
-		if(fread(&c, 1, 1, f) == 0) break;
+		if(__fread(&c, 1, 1, f) == 0) break;
 
 		if(c == '\r') continue; // ignore this
 
@@ -110,7 +110,7 @@ bool IniReader::Parse()
 	notes << endl;*/
 
 parseCleanup:
-	fclose(f);
+	__fclose(f);
 
 	return res;
 }

@@ -817,7 +817,7 @@ void CGameLauncher::ponder(const float deltaT)
     if(gVideoDriver.getRefreshSignal())
     {
         // Set the native resolution
-        gVideoDriver.setNativeResolution(gVideoDriver.getVidConfig().mDisplayRect);
+        //gVideoDriver.setNativeResolution(gVideoDriver.getVidConfig().mDisplayRect);
 
         gVideoDriver.setRefreshSignal(false);
     }

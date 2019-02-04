@@ -145,15 +145,19 @@ bool CExeFile::readData(const unsigned int episode,
 
     auto &keenFiles = gKeenFiles;
     keenFiles.gameDir = localDataDir;
-		
+
+SDL_LockDisplay();		
 	File.seekg(0,std::ios::end);
 	m_datasize = File.tellg();
 	File.seekg(0,std::ios::beg);
+SDL_UnlockDisplay();
 
     // Read all the file into the memory
     std::vector<unsigned char> dataTemp(m_datasize);
+SDL_LockDisplay();	    
     File.read((char*)dataTemp.data(), m_datasize);
 	File.close();
+SDL_UnlockDisplay();
 
 	Cunlzexe UnLZEXE;
 

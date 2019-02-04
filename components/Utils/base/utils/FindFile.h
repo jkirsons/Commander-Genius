@@ -334,7 +334,8 @@ public:
 	bool operator() (const std::string& path) {
 printf("FindFilesHandler operator(): path:%s dir: %s\n", path.c_str(), dir.c_str());		
 		std::string abs_path = path;
-		//if(!GetExactFileName(path + dir, abs_path)) return true;
+		//if(!
+		GetExactFileName(path + dir, abs_path);//) return true;
 		bool ret = true;
 
 #ifdef WIN32  // uses UTF16
@@ -363,10 +364,10 @@ printf("FindFilesHandler operator(): path:%s dir: %s\n", path.c_str(), dir.c_str
 		dirent* entry;
 		struct stat s;
 		DIR* handle = __opendir(abs_path.c_str());
-printf("handle: %p\n", handle);		
+//printf("handle: %p\n", handle);		
 		if(!handle) return ret;
 		while((entry = __readdir(handle)) != 0) {
-printf("entry->d_name: %s\n", entry->d_name);			
+//printf("entry->d_name: %s\n", entry->d_name);			
             //If file is nkaution vom mieterot self-directory or parent-directory
 			if(entry->d_name[0] != '.' || (entry->d_name[1] != '\0' && (entry->d_name[1] != '.' || entry->d_name[2] != '\0'))) {
 				filename = abs_path + "/" + entry->d_name;
