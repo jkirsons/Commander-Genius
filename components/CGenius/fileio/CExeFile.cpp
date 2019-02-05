@@ -160,14 +160,19 @@ SDL_LockDisplay();
 SDL_UnlockDisplay();
 
 	Cunlzexe UnLZEXE;
+    unsigned char * data; 
 
 	std::vector<unsigned char> decdata;
     if(UnLZEXE.decompress(dataTemp.data(), decdata))
 	{
 		m_datasize = decdata.size();
-		mData.resize(m_datasize);
+        printf("resizing %p to: %d\n", data, m_datasize);
+		//mData.resize(m_datasize);
+        data = (unsigned char *)malloc(m_datasize);
+        if(data == NULL)
+            printf("failed resizing\n");
 		m_headersize = UnLZEXE.HeaderSize();
-		memcpy(mData.data(), &decdata[0], m_datasize);
+		memcpy(/*mData.data()*/data, &decdata[0], m_datasize);
 	}
 	else
 	{
@@ -175,14 +180,14 @@ SDL_UnlockDisplay();
         memcpy(mData.data(), dataTemp.data(),m_datasize);
 	}
 
-	m_headerdata = mData.data();
+	m_headerdata = data;//mData.data();
 	m_headersize = UnLZEXE.HeaderSize();
 	if(!m_headersize)
     {
 		m_headersize = fetchUncompressedHeaderSize(m_headerdata);
     }
 
-	m_rawdata = mData.data() + m_headersize;
+	m_rawdata = data/*mData.data()*/ + m_headersize;
 
 	const size_t offset_map[] = {
 			/*Dummy:*/ 0x0,
@@ -200,8 +205,8 @@ SDL_UnlockDisplay();
 
     m_data_segment = m_rawdata + offset_map[offset_index];
 
-	m_crc = getcrc32( mData.data(), m_datasize );
-
+	m_crc = getcrc32( data/*mData.data()*/, m_datasize );
+    free(data);
 	gLogging.ftextOut( "EXE processed with size of %d and crc of %X\n", m_datasize, m_crc );
 
 	return true;

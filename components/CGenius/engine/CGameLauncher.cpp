@@ -307,6 +307,8 @@ printf("Scanning Subdirectory: %s\n", path.c_str());
 
     for( const auto &subdir : dirs )
 	{
+        if(subdir != "base1" && subdir != "base2" && subdir != "base3" && subdir != "")
+            continue;
         std::string newpath = JoinPaths(path , subdir);
 
         gamesDetected |= scanExecutables(newpath);

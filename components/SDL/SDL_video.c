@@ -110,8 +110,8 @@ printf("Surface Depth: %d\n", depth);
 	pf->BitsPerPixel = depth;//8;
 	pf->BytesPerPixel = depth/8;
 	pf->Rloss = 0; pf->Gloss = 0; pf->Bloss = 0; pf->Aloss = 0,
-	pf->Rshift = 0; pf->Gshift = 0; pf->Bshift = 0; pf->Ashift = 0;
-	pf->Rmask = 0; pf->Gmask = 0; pf->Bmask = 0; pf->Amask = 0;
+	pf->Rshift = 24; pf->Gshift = 16; pf->Bshift = 8; pf->Ashift = 0;
+	pf->Rmask = 0xFF000000; pf->Gmask = 0x00FF0000; pf->Bmask = 0x0000FF00; pf->Amask = 0x000000FF;
 	pf->colorkey = 0;
 	pf->alpha = 0;
 
@@ -553,6 +553,8 @@ SDL_Surface * SDL_ConvertSurface (SDL_Surface *surface,
  */
 Uint8 SDL_FindColor(SDL_Palette *pal, Uint8 r, Uint8 g, Uint8 b)
 {
+	if(pal != NULL)
+		return 0;
 	/* Do colorspace distance matching */
 	unsigned int smallest;
 	unsigned int distance;

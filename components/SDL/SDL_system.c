@@ -62,7 +62,7 @@ void SDL_InitSD(void)
 #if 1
 	sdmmc_host_t host = SDSPI_HOST_DEFAULT();
     host.command_timeout_ms = 3000;
-    host.max_freq_khz = 19000; //SDMMC_FREQ_PROBING; //SDMMC_FREQ_DEFAULT;
+    host.max_freq_khz = SDMMC_FREQ_DEFAULT; //SDMMC_FREQ_PROBING; //SDMMC_FREQ_DEFAULT;
     // https://docs.espressif.com/projects/esp-idf/en/latest/api-reference/peripherals/spi_master.html
     host.slot = /*CONFIG_HW_SD_PIN_NUM_MISO == 19 ? VSPI_HOST :*/ HSPI_HOST;
     sdspi_slot_config_t slot_config = SDSPI_SLOT_CONFIG_DEFAULT();

@@ -47,6 +47,7 @@
 const int DUTY_MAX = 0x1fff;
 bool isBackLightIntialized = false;
 const int LCD_BACKLIGHT_ON_VALUE = 1;
+const int bpp = 32;
 
 /*
  The LCD needs a bunch of command/argument values to be initialized. They are stored in this struct.
@@ -218,15 +219,10 @@ void ili_init(spi_device_handle_t spi)
     int cmd=0;
     //Initialize non-SPI GPIOs
     gpio_set_direction(PIN_NUM_DC, GPIO_MODE_OUTPUT);
-    //gpio_set_direction(PIN_NUM_RST, GPIO_MODE_OUTPUT);
     if(PIN_NUM_BCKL != -1)
         gpio_set_direction(PIN_NUM_BCKL, GPIO_MODE_OUTPUT);
 
     backlight_init();
-    //Reset the display
-    //gpio_set_level(PIN_NUM_RST, 0);
-    //vTaskDelay(100 / portTICK_RATE_MS);
-    //gpio_set_level(PIN_NUM_RST, 1);
     vTaskDelay(100 / portTICK_RATE_MS);
 
     //Send all the commands
@@ -386,8 +382,9 @@ void IRAM_ATTR displayTask(void *arg) {
 		send_header_start(spi, 0, screen_boarder, 320, 240-screen_boarder*2);
 		send_header_cleanup(spi);
         
-		for (x=0; x<320*(240-screen_boarder*2); x+=MEM_PER_TRANS) {
+		for (x=0; x<320*(240-screen_boarder*2)*(bpp/8); x+=MEM_PER_TRANS) {
 #ifdef DOUBLE_BUFFER
+        if(bpp == 8) {
 			for (i=0; i<MEM_PER_TRANS; i+=4) {
 				uint32_t d=currFbPtr[(x+i)/4];
 				dmamem[idx][i+0]=lcdpal[(d>>0)&0xff];
@@ -395,6 +392,12 @@ void IRAM_ATTR displayTask(void *arg) {
 				dmamem[idx][i+2]=lcdpal[(d>>16)&0xff];
 				dmamem[idx][i+3]=lcdpal[(d>>24)&0xff];
 			}
+        } else {
+            for (i=0; i<MEM_PER_TRANS; i+=1) {
+                uint32_t rgb = currFbPtr[(x+i)*4];
+                dmamem[idx][i]=(((rgb&0xf80000)>>8)|((rgb&0xfc00)>>5)|((rgb&0xf8)>>3));
+            }
+        }
 #else
 			for (i=0; i<MEM_PER_TRANS; i++) {
 				dmamem[idx][i]=lcdpal[myData[i]];
@@ -444,7 +447,7 @@ void spi_lcd_wait_finish() {
 
 void spi_lcd_send(uint16_t *scr) {
 #ifdef DOUBLE_BUFFER
-	memcpy(currFbPtr, scr, 320*240);
+	memcpy(currFbPtr, scr, 320*240*(bpp/8));
 	//Theoretically, also should double-buffer the lcdpal array... ahwell.
 #else
 	currFbPtr=scr;
@@ -456,7 +459,7 @@ void IRAM_ATTR spi_lcd_send_boarder(uint16_t *scr, int boarder) {
 #ifdef DOUBLE_BUFFER
 	//memcpy(currFbPtr+(boarder*320/4), scr, 320*(240-boarder*2));
     screen_boarder = boarder;
-	memcpy(currFbPtr, scr, 320*(240-boarder*2));
+	memcpy(currFbPtr, scr, 320*(240-boarder*2)*(bpp/8));
 #else
 	currFbPtr=scr;
 #endif
@@ -465,7 +468,7 @@ void IRAM_ATTR spi_lcd_send_boarder(uint16_t *scr, int boarder) {
 
 void spi_lcd_clear() {
 #ifdef DOUBLE_BUFFER
-	memset(currFbPtr,0,(320*240/sizeof(currFbPtr)));
+	memset(currFbPtr,0,(320*240/sizeof(currFbPtr))*(bpp/8));
 #endif
 	xSemaphoreGive(dispSem);
 }
@@ -476,8 +479,8 @@ void spi_lcd_init() {
     //dispDoneSem=xSemaphoreCreateBinary();
 #ifdef DOUBLE_BUFFER
     screen_boarder = 0;
-    currFbPtr=heap_caps_malloc(320*240, MALLOC_CAP_32BIT);
-    memset(currFbPtr,0,(320*240));
+    currFbPtr=heap_caps_malloc(320*240*(bpp/8), MALLOC_CAP_32BIT);
+    memset(currFbPtr,0,(320*240)*(bpp/8));
 #endif
 #if CONFIG_FREERTOS_UNICORE
 	xTaskCreatePinnedToCore(&displayTask, "display", 6000, NULL, 6, NULL, 0);
