@@ -382,7 +382,7 @@ void IRAM_ATTR displayTask(void *arg) {
 		send_header_start(spi, 0, screen_boarder, 320, 240-screen_boarder*2);
 		send_header_cleanup(spi);
         
-		for (x=0; x<320*(240-screen_boarder*2)*(bpp/8); x+=MEM_PER_TRANS) {
+		for (x=0; x<320*(240-screen_boarder*2)*(bpp/8); x+=MEM_PER_TRANS*4) {
 #ifdef DOUBLE_BUFFER
         if(bpp == 8) {
 			for (i=0; i<MEM_PER_TRANS; i+=4) {
@@ -394,8 +394,9 @@ void IRAM_ATTR displayTask(void *arg) {
 			}
         } else {
             for (i=0; i<MEM_PER_TRANS; i+=1) {
-                uint32_t rgb = currFbPtr[(x+i)*4];
-                dmamem[idx][i]=(((rgb&0xf80000)>>8)|((rgb&0xfc00)>>5)|((rgb&0xf8)>>3));
+                uint32_t rgb = currFbPtr[(x+i*4)];
+                int v=(((rgb>>24&0xff>>3)<<11)|((rgb>>16&0xff>>2)<<5)|((rgb>>8&0xff)>>3));
+                dmamem[idx][i]=(v>>8)+(v<<8);
             }
         }
 #else

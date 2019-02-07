@@ -55,7 +55,7 @@ class CVideoEngine
 {
 public:
 
-
+    void test();
     /**
      * @brief CVideoEngine
      * @param VidConfig Video Configuration flags used to setup the Video Engine

@@ -278,6 +278,8 @@ void GsApp::runMainCycle()
 
             // Pass all the surfaces to one. Some special surfaces are used and are collected here
             gVideoDriver.collectSurfaces();
+            
+            //gVideoDriver.mpVideoEngine->test();
 
             // Now you really render the screen
             // When enabled, it also applies Filters

@@ -393,3 +393,12 @@ void CVideoEngine::shutdown()
 {
 
 }
+
+void CVideoEngine::test()
+{
+    SDL_Rect rect;
+    rect.x = 0;     rect.y = 0;
+    rect.w = 320;
+    rect.h = 200;
+    mDisplaySfc.fillRGB( rect, 0xFF, 0x0, 0x0 );
+}
