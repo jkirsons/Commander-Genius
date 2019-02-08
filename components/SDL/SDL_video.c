@@ -106,7 +106,7 @@ printf("Surface Depth: %d\n", depth);
     SDL_Color col = {.r=0, .g=0, .b=0, .unused=0};
     SDL_Palette pal =  {.ncolors=1, .colors=&col};
     SDL_PixelFormat* pf = (SDL_PixelFormat*)calloc(1, sizeof(SDL_PixelFormat));
-	pf->palette = &pal;
+	pf->palette = NULL; //&pal;
 	pf->BitsPerPixel = depth;//8;
 	pf->BytesPerPixel = depth/8;
 	pf->Rloss = 0; pf->Gloss = 0; pf->Bloss = 0; pf->Aloss = 0,
