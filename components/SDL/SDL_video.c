@@ -1,6 +1,7 @@
 #include "SDL_video.h"
 #include "SDL.h"
 //#include "SDL_blit.h"
+#include "spi_lcd.h"
 
 #define SPI_BUS TFT_VSPI_HOST
 
@@ -90,7 +91,7 @@ int SDL_InitSubSystem(Uint32 flags)
     if(flags == SDL_INIT_VIDEO)
     {
     	spi_lcd_init();
-        SDL_CreateRGBSurface(0, 320, 200, 8, 0,0,0,0);
+        //SDL_CreateRGBSurface(0, 320, 200, 32, 0xFF000000,0xFF0000,0xFF00,0xFF);
     }
     return 0; // 0 = OK, -1 = Error
 }
@@ -139,6 +140,7 @@ int SDL_FillRect(SDL_Surface *dst, SDL_Rect *dstrect, Uint32 color)
 {
     if(dst == NULL )//|| dst->sprite == NULL)
     {
+		printf("SDL_FillRect with NULL surface\n");
         // Draw directly on screen
     	//if(dstrect == NULL)
     		//TFT_fillWindow(TFT_BLACK);
@@ -147,9 +149,12 @@ int SDL_FillRect(SDL_Surface *dst, SDL_Rect *dstrect, Uint32 color)
     } else {
     	if(dstrect != NULL)
     	{
-			for(int y = dstrect->y; y < dstrect->y + dstrect->h;y++)
-				memset((unsigned char *)dst->pixels + y*320 + dstrect->x, (unsigned char)color, dstrect->w);
+			uint32_t *pixels = dst->pixels;
+			for(int y = dstrect->y; y < dstrect->y + dstrect->h; y++)
+				for(int x = dstrect->x; x < dstrect->x + dstrect->w; x++)
+					pixels[x + y * dst->w ] = color;
     	} else {
+			printf("SDL_FillRect with NULL rect\n");
     		memset(dst->pixels, (unsigned char)color, dst->pitch*dst->h);
     	}
     }
@@ -158,6 +163,41 @@ int SDL_FillRect(SDL_Surface *dst, SDL_Rect *dstrect, Uint32 color)
 
 SDL_Surface *SDL_GetVideoSurface(void)
 {
+    if(primary_surface == NULL)
+    {	
+		int width = 320;
+		int height = 240;
+		int depth = 32;
+		
+		SDL_Surface *surface = (SDL_Surface *)calloc(1, sizeof(SDL_Surface));
+		SDL_Rect rect = { .x=0, .y=0, .w=width, .h=height};
+		SDL_Color col = {.r=0, .g=0, .b=0, .unused=0};
+		SDL_Palette pal =  {.ncolors=1, .colors=&col};
+		SDL_PixelFormat* pf = (SDL_PixelFormat*)calloc(1, sizeof(SDL_PixelFormat));
+		pf->palette = NULL; //&pal;
+		pf->BitsPerPixel = depth;//8;
+		pf->BytesPerPixel = depth/8;
+		pf->Rloss = 0; pf->Gloss = 0; pf->Bloss = 0; pf->Aloss = 0,
+		pf->Rshift = 24; pf->Gshift = 16; pf->Bshift = 8; pf->Ashift = 0;
+		pf->Rmask = 0xFF000000; pf->Gmask = 0x00FF0000; pf->Bmask = 0x0000FF00; pf->Amask = 0x000000FF;
+		pf->colorkey = 0;
+		pf->alpha = 0;
+
+		surface->flags = 0;//flags;
+		surface->format = pf;
+		surface->w = width;
+		surface->h = height;
+		surface->pitch = width*(depth/8);
+		surface->clip_rect = rect;
+		surface->refcount = 1;
+		surface->pixels = currFbPtr;
+		//heap_caps_malloc(width*height*(depth/8)/*1*/, MALLOC_CAP_SPIRAM);
+		surface->map = malloc(sizeof(SDL_BlitMap));
+		surface->map->sw_blit = SDL_SoftBlit;
+		surface->map->sw_data = malloc(sizeof(pub_swaccel));
+		surface->map->sw_data->blit = SDL_BlitCopy;
+		primary_surface = surface;	
+	}
     return primary_surface;
 }
 

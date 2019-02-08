@@ -309,7 +309,7 @@ void IRAM_ATTR send_header_cleanup(spi_device_handle_t spi)
 volatile static uint16_t *currFbPtr=NULL;
 #else
 //Warning: This gets squeezed into IRAM.
-static uint32_t *currFbPtr=NULL;
+/*static*/ uint32_t *currFbPtr=NULL;
 #endif
 SemaphoreHandle_t dispSem = NULL;
 SemaphoreHandle_t dispDoneSem = NULL;
@@ -382,7 +382,7 @@ void IRAM_ATTR displayTask(void *arg) {
 		send_header_start(spi, 0, screen_boarder, 320, 240-screen_boarder*2);
 		send_header_cleanup(spi);
         
-		for (x=0; x<320*(240-screen_boarder*2)*(bpp/8); x+=MEM_PER_TRANS*4) {
+		for (x=0; x<320*(240-screen_boarder*2); x+=MEM_PER_TRANS) {
 #ifdef DOUBLE_BUFFER
         if(bpp == 8) {
 			for (i=0; i<MEM_PER_TRANS; i+=4) {
@@ -394,8 +394,12 @@ void IRAM_ATTR displayTask(void *arg) {
 			}
         } else {
             for (i=0; i<MEM_PER_TRANS; i+=1) {
-                uint32_t rgb = currFbPtr[(x+i*4)];
-                int v=(((rgb>>24&0xff>>3)<<11)|((rgb>>16&0xff>>2)<<5)|((rgb>>8&0xff)>>3));
+                uint32_t rgb = currFbPtr[(x+i)];
+                int v=(
+                    ((((rgb>>24)&0xff)>>3)<<11)
+                    |((((rgb>>16)&0xff)>>2)<<5)
+                    |(((rgb>>8)&0xff)>>3)
+                    );
                 dmamem[idx][i]=(v>>8)+(v<<8);
             }
         }
@@ -460,6 +464,12 @@ void IRAM_ATTR spi_lcd_send_boarder(uint16_t *scr, int boarder) {
 #ifdef DOUBLE_BUFFER
 	//memcpy(currFbPtr+(boarder*320/4), scr, 320*(240-boarder*2));
     screen_boarder = boarder;
+    /*
+    for (int x=0; x<320*240; x+=1) {
+        currFbPtr[x] = 0x0000FF00;
+        //currFbPtr[x*2+1] = 0xFF00;
+    }
+    */
 	memcpy(currFbPtr, scr, 320*(240-boarder*2)*(bpp/8));
 #else
 	currFbPtr=scr;

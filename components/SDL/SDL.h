@@ -34,6 +34,11 @@ typedef int SDLMod;
 
 #define PLATFORM_ESP32 1
 
+#define LOAD_BMP 1
+#define LOAD_PCX 1
+
+#define SDL_AllocSurface    SDL_CreateRGBSurface
+
 #define SDLK_FIRST 0
 #define SDLK_LAST 1024
 
