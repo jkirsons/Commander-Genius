@@ -432,7 +432,7 @@ bool CGameLauncher::start()
 
     // Here it always makes sense to have the mouse cursor active
     SDL_ShowCursor(SDL_ENABLE);
-    Check("CGameLauncher::start()");
+//    Check("CGameLauncher::start()");
     // Set the native resolution
     //gVideoDriver.setNativeResolution(gVideoDriver.getVidConfig().mDisplayRect);
 
@@ -440,7 +440,7 @@ bool CGameLauncher::start()
     // We do this here
     GsWeakSurface blit(gVideoDriver.getBlitSurface());
     blit.fillRGB(0, 0, 0);
-Check("CGameLauncher 2");
+//Check("CGameLauncher 2");
     // Load the graphics for menu and background.
     // Resources for the main menu
     // This is only for the menu. We only need one fontmap for the list of games and some buttons
@@ -448,7 +448,7 @@ Check("CGameLauncher 2");
     GsFont &Font = gGraphics.getFont(0);
 
     const auto height = gVideoDriver.getHeight();
-Check("CGameLauncher 3");
+//Check("CGameLauncher 3");
     // Depending on the height the font is loaded as scaled
     // so readability is better on higher resolutions.
     if(height >= 1920)
@@ -467,7 +467,7 @@ Check("CGameLauncher 3");
     {
         Font.loadinternalFont(1);
     }
-Check("CGameLauncher 4");
+//Check("CGameLauncher 4");
     struct GamesScan : public Action
     {
         CGameLauncher &mGameLauncher;
@@ -490,7 +490,7 @@ Check("CGameLauncher 4");
     mGameScanner.setStyle(PROGRESS_STYLE_TEXT);
     mGameScanner.RunLoadActionBackground(new GamesScan(*this));
     mGameScanner.start();
-Check("CGameLauncher 5");
+//Check("CGameLauncher 5");
     return true;
 }
 

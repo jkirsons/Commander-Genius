@@ -58,7 +58,7 @@ bool CEGAGraphicsVort::loadData( int version, unsigned char *p_exedata )
       data.push_back(byte);
     }
   HeadFile.close();
-  
+
   // Now copy the data to the EGAHEAD Structure
   memcpy(&LatchPlaneSize,&data[0],4);
   memcpy(&SpritePlaneSize,&data[0]+4,4);
@@ -76,15 +76,16 @@ bool CEGAGraphicsVort::loadData( int version, unsigned char *p_exedata )
   memcpy(&NumSprites,&data[0]+40,4);
   memcpy(&SpriteLocation,&data[0]+42,4);
   memcpy(&compressed,&data[0]+46,4);
-  
+ 
   // First, retrieve the Tile properties so the tilemap gets properly formatted
   // Important especially for masks, and later in the game for the behaviours
   // of those objects
   
   CTileLoader TileLoader( episode, false, version, p_exedata );
+Check("Vort 6.5");    
   if(!TileLoader.load(0, Num16Tiles))
     return false;
-  
+Check("Vort 7");   
   m_Latch = new CEGALatch(LatchPlaneSize,
 			  BitmapTableStart,
 			  FontTiles,
@@ -95,12 +96,12 @@ bool CEGAGraphicsVort::loadData( int version, unsigned char *p_exedata )
 			  Tiles16Location,
 			  NumBitmaps,
 			  BitmapLocation);
-  
+Check("Vort 8");   
   m_Latch->loadHead( &data[0], episode );
   
   m_Latch->loadData( gamedir, episode, version, p_exedata, (compressed>>1) ); // The second bit tells, if latch is compressed.
   
-  
+Check("Vort 9");   
   m_Sprit = new CEGASprit(SpritePlaneSize,
 			  SpriteStart,
 			  NumSprites,
@@ -108,7 +109,7 @@ bool CEGAGraphicsVort::loadData( int version, unsigned char *p_exedata )
               gamedir, episode,
               mLoader);
   m_Sprit->loadHead(&data[0]);
-  
+Check("Vort 10");   
   struct SpriteLoad: public Action
   {
       std::string buf;
@@ -117,21 +118,21 @@ bool CEGAGraphicsVort::loadData( int version, unsigned char *p_exedata )
       
       SpriteLoad(CEGASprit *Sprit, const std::string& _buf, bool _compressed):
 	buf(_buf), compressed(_compressed), m_Sprit(Sprit) {}
-      
+ 
       int handle()
       {
 	m_Sprit->loadData(buf,compressed);
 	return 1;
       }
   };
-  
+ Check("Vort 11"); 
   SpriteLoad sprLoad(m_Sprit,
 		     ((gamedir != "") ? gamedir + "/" : "") + 
 		     "egasprit.ck" + itoa(episode),
 		     (compressed>>1));
-  
+ Check("Vort 12"); 
   sprLoad.handle();
-  
+ Check("Vort 13"); 
   return true;
 }
 

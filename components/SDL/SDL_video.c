@@ -73,7 +73,7 @@ void SetPF(int depth, SDL_PixelFormat *pf)
 
 SDL_VideoInfo *SDL_GetVideoInfo(void)
 {
-	SDL_Color col = {.r=0, .g=0, .b=0, .unused=0};
+	SDL_Color col[] = {{0, 0, 0, 0}};
     SDL_Palette pal =  {.ncolors=1, .colors=&col};
     SDL_VideoInfo *info = malloc(sizeof(SDL_VideoInfo));
     info->hw_available = 0;
@@ -139,11 +139,12 @@ int SDL_InitSubSystem(Uint32 flags)
 
 SDL_Surface *SDL_CreateRGBSurface(Uint32 flags, int width, int height, int depth, Uint32 Rmask, Uint32 Gmask, Uint32 Bmask, Uint32 Amask)
 {
+	Check("Create Surface");
 printf("Surface Width: %d Height: %d Depth: %d\n", width, height, depth);
     SDL_Surface *surface = (SDL_Surface *)calloc(1, sizeof(SDL_Surface));
     SDL_Rect rect = { .x=0, .y=0, .w=width, .h=height};
-    SDL_Color col = {.r=0, .g=0, .b=0, .unused=0};
-    SDL_Palette pal =  {.ncolors=1, .colors=&col};
+    SDL_Color *col = (SDL_Color *)malloc(256 * sizeof(SDL_Color));
+    SDL_Palette pal =  {.ncolors=255, .colors=col};
     SDL_PixelFormat* pf = (SDL_PixelFormat*)calloc(1, sizeof(SDL_PixelFormat));
 	pf->palette = depth == 8 ? &pal : NULL;
 	pf->BitsPerPixel = depth;//8;
@@ -219,7 +220,7 @@ SDL_Surface *SDL_GetVideoSurface(void)
 		
 		SDL_Surface *surface = (SDL_Surface *)calloc(1, sizeof(SDL_Surface));
 		SDL_Rect rect = { .x=0, .y=0, .w=width, .h=height};
-		SDL_Color col = {.r=0, .g=0, .b=0, .unused=0};
+		SDL_Color col[] = {{0, 0, 0, 0}};
 		SDL_Palette pal =  {.ncolors=1, .colors=&col};
 		SDL_PixelFormat* pf = (SDL_PixelFormat*)calloc(1, sizeof(SDL_PixelFormat));
 		pf->palette = depth == 8 ? &pal : NULL;
@@ -308,7 +309,7 @@ int SDL_Flip(SDL_Surface *screen)
 
 int SDL_VideoModeOK(int width, int height, int bpp, Uint32 flags)
 {
-	if(bpp == 8 || bpp == 32)
+	if(bpp == 8 || bpp == 16 || bpp == 32)
 		return 1;
 	return 0;
 }

@@ -136,7 +136,7 @@ bool CTileLoader::load(const size_t NumUnMaskedTiles,
 			for(int i=0 ; i<2 ; i++)
 			{
 			  std::vector<CTileProperties> &tileProperties = gBehaviorEngine.getTileProperties(i);			
-              tileProperties.assign(NumMaskedTiles, emptyTileProperties);
+              //tileProperties.assign(NumMaskedTiles, emptyTileProperties);
               success = readVorticonTileinfo(data, tileProperties);
 			}
 		}

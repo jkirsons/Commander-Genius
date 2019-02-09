@@ -68,7 +68,7 @@ IRAM_ATTR void updateTask(void *arg)
 		  //SDL_UnlockAudio();
 
 		  //audioToOdroidGoFormat(sdl_buffer, out_buffer, SAMPLECOUNT*SAMPLESIZE);
-		  ESP_ERROR_CHECK(i2s_write(I2S_NUM_0, out_buffer, SAMPLECOUNT*SAMPLESIZE*2, &bytesWritten, 500 / portTICK_PERIOD_MS /*portMAX_DELAY*/ ));
+		  //ESP_ERROR_CHECK(i2s_write(I2S_NUM_0, out_buffer, SAMPLECOUNT*SAMPLESIZE*2, &bytesWritten, 500 / portTICK_PERIOD_MS /*portMAX_DELAY*/ ));
 		  
 	  } else {
 		  vTaskDelay( 5 );

@@ -173,7 +173,7 @@ bool GsApp::loadDrivers()
  
 	// Init graphics
     if (!gVideoDriver.start()) return false;
-Check("loadDrivers - after");		
+//Check("loadDrivers - after");		
 	return true;
 }
 

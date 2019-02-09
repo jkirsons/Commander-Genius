@@ -10,9 +10,12 @@
 void Check(const char *str)
 {
 #if 0	
-	printf("%s - ", str);	
+	heap_caps_print_heap_info(MALLOC_CAP_SPIRAM);
+	//heap_caps_print_heap_info(MALLOC_CAP_INTERNAL);
+	printf("%s - \n", str);	
 	heap_caps_check_integrity_all(true);  
-	SDL_Delay(1000);    
+	
+	SDL_Delay(2000);    
 	printf("OK\n");	
 #endif	
 }
