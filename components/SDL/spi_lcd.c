@@ -15,6 +15,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "spi_lcd.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "esp_system.h"
@@ -23,6 +24,7 @@
 #include "driver/gpio.h"
 #include "esp_heap_caps.h"
 #include "SDL.h"
+
 
 #if 0
 #define PIN_NUM_MISO 25
@@ -47,7 +49,7 @@
 const int DUTY_MAX = 0x1fff;
 bool isBackLightIntialized = false;
 const int LCD_BACKLIGHT_ON_VALUE = 1;
-const int bpp = 32;
+int lcd_bpp = 32;
 
 /*
  The LCD needs a bunch of command/argument values to be initialized. They are stored in this struct.
@@ -315,7 +317,7 @@ SemaphoreHandle_t dispSem = NULL;
 SemaphoreHandle_t dispDoneSem = NULL;
 
 #define NO_SIM_TRANS 5 //Amount of SPI transfers to queue in parallel
-#define MEM_PER_TRANS 320*8 //in 16-bit words
+#define MEM_PER_TRANS 320*4 //in 16-bit words
 
 int16_t lcdpal[256];
 
@@ -384,7 +386,7 @@ void IRAM_ATTR displayTask(void *arg) {
         
 		for (x=0; x<320*(240-screen_boarder*2); x+=MEM_PER_TRANS) {
 #ifdef DOUBLE_BUFFER
-        if(bpp == 8) {
+        if(lcd_bpp == 8) {
 			for (i=0; i<MEM_PER_TRANS; i+=4) {
 				uint32_t d=currFbPtr[(x+i)/4];
 				dmamem[idx][i+0]=lcdpal[(d>>0)&0xff];
@@ -452,7 +454,7 @@ void spi_lcd_wait_finish() {
 
 void spi_lcd_send(uint16_t *scr) {
 #ifdef DOUBLE_BUFFER
-	memcpy(currFbPtr, scr, 320*240*(bpp/8));
+	memcpy(currFbPtr, scr, 320*240*(lcd_bpp/8));
 	//Theoretically, also should double-buffer the lcdpal array... ahwell.
 #else
 	currFbPtr=scr;
@@ -470,7 +472,7 @@ void IRAM_ATTR spi_lcd_send_boarder(uint16_t *scr, int boarder) {
         //currFbPtr[x*2+1] = 0xFF00;
     }
     */
-	memcpy(currFbPtr, scr, 320*(240-boarder*2)*(bpp/8));
+	memcpy(currFbPtr, scr, 320*(240-boarder*2)*(lcd_bpp/8));
 #else
 	currFbPtr=scr;
 #endif
@@ -479,7 +481,7 @@ void IRAM_ATTR spi_lcd_send_boarder(uint16_t *scr, int boarder) {
 
 void spi_lcd_clear() {
 #ifdef DOUBLE_BUFFER
-	memset(currFbPtr,0,(320*240/sizeof(currFbPtr))*(bpp/8));
+	memset(currFbPtr,0,(320*240/sizeof(currFbPtr))*(lcd_bpp/8));
 #endif
 	xSemaphoreGive(dispSem);
 }
@@ -490,8 +492,8 @@ void spi_lcd_init() {
     //dispDoneSem=xSemaphoreCreateBinary();
 #ifdef DOUBLE_BUFFER
     screen_boarder = 0;
-    currFbPtr=heap_caps_malloc(320*240*(bpp/8), MALLOC_CAP_32BIT);
-    memset(currFbPtr,0,(320*240)*(bpp/8));
+    currFbPtr=heap_caps_malloc(320*240*(lcd_bpp/8), MALLOC_CAP_32BIT);
+    memset(currFbPtr,0,(320*240)*(lcd_bpp/8));
 #endif
 #if CONFIG_FREERTOS_UNICORE
 	xTaskCreatePinnedToCore(&displayTask, "display", 6000, NULL, 6, NULL, 0);

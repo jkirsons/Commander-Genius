@@ -153,7 +153,7 @@ char *SDL_GetKeyName(SDLKey key);
 
 
 SDL_Surface *SDL_GetVideoSurface(void);
-Uint32 SDL_MapRGB(SDL_PixelFormat *fmt, Uint8 r, Uint8 g, Uint8 b);
+Uint32 SDL_MapRGB(const SDL_PixelFormat * const format, const Uint8 r, const Uint8 g, const Uint8 b);
 int SDL_SetColors(SDL_Surface *surface, SDL_Color *colors, int firstcolor, int ncolors);
 SDL_Surface *SDL_SetVideoMode(int width, int height, int bpp, Uint32 flags);
 void SDL_FreeSurface(SDL_Surface *surface);

@@ -103,6 +103,7 @@ Check("loadfromXPMData 4");
 		sscanf(data[c+1], "%c\t%c #%s", &charCode, &dummy, colorCode);
 		color = strtol( colorCode, NULL, 16 );
 		colorMap[charCode] = color;
+        //printf("colorcode: %s\n", colorCode);
 	}
 Check("loadfromXPMData 5");
 

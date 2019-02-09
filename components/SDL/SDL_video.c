@@ -22,8 +22,59 @@ void SDL_UpdateRect(SDL_Surface *screen, Sint32 x, Sint32 y, Sint32 w, Sint32 h)
     SDL_Flip(screen);
 }
 
+void SetPF(int depth, SDL_PixelFormat *pf)
+{
+	switch(depth)
+	{
+		case 32:
+			pf->Rloss = 0; pf->Gloss = 0; pf->Bloss = 0; pf->Aloss = 0;
+			pf->Rmask = 0xFF000000; 
+			pf->Gmask = 0x00FF0000; 
+			pf->Bmask = 0x0000FF00; 
+			pf->Amask = 0x000000FF;
+			pf->Rshift = 24; 
+			pf->Gshift = 16; 
+			pf->Bshift = 8; 
+			pf->Ashift = 0;	
+			break;
+		case 16:
+			pf->Rloss = 8-(depth/3);
+			pf->Gloss = 8-(depth/3)-(depth%3);
+			pf->Bloss = 8-(depth/3);
+			pf->Rshift = ((depth/3)+(depth%3))+(depth/3);
+			pf->Gshift = (depth/3);
+			pf->Bshift = 0;		
+
+			//pf->Rmask = 0x7C00;
+			//pf->Gmask = 0x03E0;
+			//pf->Bmask = 0x001F;
+
+			pf->Rmask = ((0xFF>>pf->Rloss)<<pf->Rshift);
+			pf->Gmask = ((0xFF>>pf->Gloss)<<pf->Gshift);
+			pf->Bmask = ((0xFF>>pf->Bloss)<<pf->Bshift);			
+			pf->Amask = 0;
+			break;
+		case 8:
+			pf->Rloss = 8;
+			pf->Gloss = 8;
+			pf->Bloss = 8;
+			pf->Aloss = 8;
+			pf->Rshift = 0;
+			pf->Gshift = 0;
+			pf->Bshift = 0;
+			pf->Ashift = 0;
+			pf->Rmask = 0;
+			pf->Gmask = 0;
+			pf->Bmask = 0;
+			pf->Amask = 0;
+			break;	
+	}	
+}
+
 SDL_VideoInfo *SDL_GetVideoInfo(void)
 {
+	SDL_Color col = {.r=0, .g=0, .b=0, .unused=0};
+    SDL_Palette pal =  {.ncolors=1, .colors=&col};
     SDL_VideoInfo *info = malloc(sizeof(SDL_VideoInfo));
     info->hw_available = 0;
     info->wm_available = 0;
@@ -36,22 +87,11 @@ SDL_VideoInfo *SDL_GetVideoInfo(void)
     info->blit_sw_A = 0;
     info->vfmt = NULL;
     info->vfmt = malloc(sizeof(SDL_PixelFormat));
+	SetPF(lcd_bpp, info->vfmt);
+	info->vfmt->palette = lcd_bpp == 8 ? &pal : NULL;
+    info->vfmt->BitsPerPixel = lcd_bpp;
+    info->vfmt->BytesPerPixel = lcd_bpp/8;
 
-    info->vfmt->palette = NULL;
-    info->vfmt->BitsPerPixel = 8;
-    info->vfmt->BytesPerPixel = 1;
-    info->vfmt->Rloss = 0;
-    info->vfmt->Gloss = 0;
-    info->vfmt->Bloss = 0;
-    info->vfmt->Aloss = 0;
-    info->vfmt->Rshift = 0;
-    info->vfmt->Gshift = 0;
-    info->vfmt->Bshift = 0;
-    info->vfmt->Ashift = 0;
-    info->vfmt->Rmask = 0;
-    info->vfmt->Gmask = 0;
-    info->vfmt->Bmask = 0;
-    info->vfmt->Amask = 0;
     info->vfmt->colorkey = 0;
     info->vfmt->alpha = 0;
 
@@ -97,22 +137,20 @@ int SDL_InitSubSystem(Uint32 flags)
 }
 
 
-
-
 SDL_Surface *SDL_CreateRGBSurface(Uint32 flags, int width, int height, int depth, Uint32 Rmask, Uint32 Gmask, Uint32 Bmask, Uint32 Amask)
 {
-printf("Surface Depth: %d\n", depth);
+printf("Surface Width: %d Height: %d Depth: %d\n", width, height, depth);
     SDL_Surface *surface = (SDL_Surface *)calloc(1, sizeof(SDL_Surface));
     SDL_Rect rect = { .x=0, .y=0, .w=width, .h=height};
     SDL_Color col = {.r=0, .g=0, .b=0, .unused=0};
     SDL_Palette pal =  {.ncolors=1, .colors=&col};
     SDL_PixelFormat* pf = (SDL_PixelFormat*)calloc(1, sizeof(SDL_PixelFormat));
-	pf->palette = NULL; //&pal;
+	pf->palette = depth == 8 ? &pal : NULL;
 	pf->BitsPerPixel = depth;//8;
 	pf->BytesPerPixel = depth/8;
-	pf->Rloss = 0; pf->Gloss = 0; pf->Bloss = 0; pf->Aloss = 0,
-	pf->Rshift = 24; pf->Gshift = 16; pf->Bshift = 8; pf->Ashift = 0;
-	pf->Rmask = 0xFF000000; pf->Gmask = 0x00FF0000; pf->Bmask = 0x0000FF00; pf->Amask = 0x000000FF;
+	
+	SetPF(depth, pf);
+
 	pf->colorkey = 0;
 	pf->alpha = 0;
 
@@ -131,8 +169,8 @@ printf("Surface Depth: %d\n", depth);
 
 
     memset(surface->pixels,0,(width*height/sizeof(surface->pixels)));
-    if(primary_surface == NULL)
-    	primary_surface = surface;
+	if(primary_surface == NULL)
+		primary_surface = surface;
     return surface;
 }
 
@@ -149,11 +187,21 @@ int SDL_FillRect(SDL_Surface *dst, SDL_Rect *dstrect, Uint32 color)
     } else {
     	if(dstrect != NULL)
     	{
-			uint32_t *pixels = dst->pixels;
-			for(int y = dstrect->y; y < dstrect->y + dstrect->h; y++)
-				for(int x = dstrect->x; x < dstrect->x + dstrect->w; x++)
-					pixels[x + y * dst->w ] = color;
-    	} else {
+			if(lcd_bpp == 32)
+			{
+				uint32_t *pixels = dst->pixels;
+				for(int y = dstrect->y; y < dstrect->y + dstrect->h; y++)
+					for(int x = dstrect->x; x < dstrect->x + dstrect->w; x++)
+						pixels[x + y * dst->w ] = color;
+			} else
+			{
+				uint8_t *pixels = dst->pixels;
+				for(int y = dstrect->y; y < dstrect->y + dstrect->h; y++)
+					for(int x = dstrect->x; x < dstrect->x + dstrect->w; x++)
+						pixels[x + y * dst->w ] = (uint8_t)color;
+			}
+			
+		} else {
 			printf("SDL_FillRect with NULL rect\n");
     		memset(dst->pixels, (unsigned char)color, dst->pitch*dst->h);
     	}
@@ -167,19 +215,17 @@ SDL_Surface *SDL_GetVideoSurface(void)
     {	
 		int width = 320;
 		int height = 240;
-		int depth = 32;
+		int depth = lcd_bpp;
 		
 		SDL_Surface *surface = (SDL_Surface *)calloc(1, sizeof(SDL_Surface));
 		SDL_Rect rect = { .x=0, .y=0, .w=width, .h=height};
 		SDL_Color col = {.r=0, .g=0, .b=0, .unused=0};
 		SDL_Palette pal =  {.ncolors=1, .colors=&col};
 		SDL_PixelFormat* pf = (SDL_PixelFormat*)calloc(1, sizeof(SDL_PixelFormat));
-		pf->palette = NULL; //&pal;
-		pf->BitsPerPixel = depth;//8;
+		pf->palette = depth == 8 ? &pal : NULL;
+		pf->BitsPerPixel = depth;
 		pf->BytesPerPixel = depth/8;
-		pf->Rloss = 0; pf->Gloss = 0; pf->Bloss = 0; pf->Aloss = 0,
-		pf->Rshift = 24; pf->Gshift = 16; pf->Bshift = 8; pf->Ashift = 0;
-		pf->Rmask = 0xFF000000; pf->Gmask = 0x00FF0000; pf->Bmask = 0x0000FF00; pf->Amask = 0x000000FF;
+		SetPF(depth, pf);
 		pf->colorkey = 0;
 		pf->alpha = 0;
 
@@ -201,8 +247,17 @@ SDL_Surface *SDL_GetVideoSurface(void)
     return primary_surface;
 }
 
-Uint32 SDL_MapRGB(SDL_PixelFormat *fmt, Uint8 r, Uint8 g, Uint8 b)
+Uint32 SDL_MapRGB(const SDL_PixelFormat * const format,
+ const Uint8 r, const Uint8 g, const Uint8 b)
 {
+	if ( format->palette == NULL ) {
+		return (r >> format->Rloss) << format->Rshift
+		       | (g >> format->Gloss) << format->Gshift
+		       | (b >> format->Bloss) << format->Bshift
+		       | format->Amask;
+	} else {
+		return SDL_FindColor(format->palette, r, g, b);
+	}/*
     if(fmt->BitsPerPixel == 16)
     {
         uint16_t bb = (b >> 3) & 0x1f;
@@ -210,7 +265,11 @@ Uint32 SDL_MapRGB(SDL_PixelFormat *fmt, Uint8 r, Uint8 g, Uint8 b)
         uint16_t rr = ((r >> 3) & 0x1f) << 11;
         return (Uint32) (rr | gg | bb);        
     }
-    return (Uint32)0;
+	if(fmt->BitsPerPixel == 32)
+    {
+        return (Uint32) (r<<24 | g<<16 | b<<8);        
+    }
+    return (Uint32)0;*/
 }
 
 int SDL_SetColors(SDL_Surface *surface, SDL_Color *colors, int firstcolor, int ncolors)
@@ -249,7 +308,7 @@ int SDL_Flip(SDL_Surface *screen)
 
 int SDL_VideoModeOK(int width, int height, int bpp, Uint32 flags)
 {
-	if(bpp == 8)
+	if(bpp == 8 || bpp == 32)
 		return 1;
 	return 0;
 }
@@ -593,7 +652,7 @@ SDL_Surface * SDL_ConvertSurface (SDL_Surface *surface,
  */
 Uint8 SDL_FindColor(SDL_Palette *pal, Uint8 r, Uint8 g, Uint8 b)
 {
-	if(pal != NULL)
+	if(pal == NULL)
 		return 0;
 	/* Do colorspace distance matching */
 	unsigned int smallest;

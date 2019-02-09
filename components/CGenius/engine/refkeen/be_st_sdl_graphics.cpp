@@ -60,7 +60,7 @@ EXT_RAM_ATTR static union {
 // Used for simple caching of EGA graphics (due to page flipping and more)
 // and similarly CGA graphics (modified only at one place)
 EXT_RAM_ATTR static union {
-	uint8_t egaGfx[2*GFX_TEX_WIDTH*GFX_TEX_HEIGHT]; // Support 640x200 mode for Catacomb Abyss
+	uint8_t egaGfx[/*2**/GFX_TEX_WIDTH*GFX_TEX_HEIGHT]; // Support 640x200 mode for Catacomb Abyss
 	uint8_t cgaGfx[GFX_TEX_WIDTH*GFX_TEX_HEIGHT];
 } g_sdlHostScrMem, g_sdlHostScrMemCache;
 
